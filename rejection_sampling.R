@@ -1,41 +1,58 @@
 
 
-rejection_sample <- function(n, sample_density, distribution, density, M = NULL) {
-  stopifnot() #WIP
+rejection_sample <- function(sample_density, distribution, density,
+                             M = NULL, lower = NULL, upper = NULL) {
+  
+  #Sample_density condition
+  stopifnot("Sample_density must be a function" = is.function(sample_density))
+  
+  #Distribution condition
+  stopifnot("Density must be a function" = is.function(density),
+            "Distribution must be a function" = is.function(distribution))
+  
+  #Upper Bound condition
+  if(!is.null(M)) stopifnot("M must be numeric" = is.numeric(M),
+                            "M must have length one" = length(M) == 1,
+                            "Must be > one" = M > 1)
+  #Interval condition
+  
   
   quot <- function(x) {
-    if(density(x) < 0) return(0)
+    if(density(x) < 0) return(1)
     else return(sample_density(x) / density(x))
   }
   
   if(is.null(M)){
-    M <- unlist(optimize(quot, c(-100,100), maximum = TRUE)[1]) #WIP
+    M <- unlist(optimize(quot, c(min(X),max(X)), maximum = TRUE)[1]) #WIP
   }
   
-  values <- c()
-  i <- 1
-  while(i <= n) {
-    u <- runif(1)
-    y <- distribution(1) #distribution must allow this form of generating values
+  if(M < 1) M <- 1.1
+  
+  function(n) {
     
-    if(u*M*density(y) < sample_density(y)) { # density(y) < 0
-      values <- c(values, y)
-      i <- i+1
+    #Sampling condition
+    stopifnot("n must be numeric" = is.numeric(n),
+              "n must havee length one" = length(n) == 1)
+    
+    n <- as.integer(n)
+    u <- numeric(M*n)
+    sample <- numeric(M*n)
+    accepted <- c()
+    
+    while(length(accepted) < n) {
+      u <- runif(M*n)
+      sample <- distribution(M*n)
+      accepted <- c(accepted, sample[u*M*density(sample) < sample_density(sample)])
     }
+    accepted[1:n]
   }
-  return(values)
 }
 
-#Example
+#Beispiel
+snorm <- rejection_sample(dnorm, rnorm, dnorm)
+X <- snorm(100)
+mean(X)
 
-norm <- function(n) {
-  return(rnorm(n, 10, 1))
-}
-
-pi_x <- function(x) {
-  (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)
-}
-
-unif <- function(n) {
-  return(runif(n))
-}
+sunif <- rejection_sample(dnorm, runif, dunif)
+X <- snorm(100)
+mean(X)

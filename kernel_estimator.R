@@ -1,12 +1,22 @@
 
 
-kernel_estimator <- function(X, K, h) {
-  stopifnot("X is invalid sample" = is.numeric(X) && length(X) > 0,
-            "K is not a function" = is.function(K),
-            "h is no number" = is.numeric(h) && length(h) == 1)
+kernel_estimator <- function(X, K = dnorm, h = 1) {
+  
+  #Sample condition
+  stopifnot("X must be a numeric" = is.numeric(X),
+            "X must be non empty" = length(X) > 0)
+            
+  #Kernel condition
+  stopifnot("K is not a funtion" = is.function(K))
+            
+  #Bandwidth condition
+  stopifnot("h must be numeric" = is.numeric(h),
+            "h must be bigger zero" = h > 0,
+            "h must have length one" = length(h) == 1)
   
   estimator <- function(x) {
-    stopifnot("x is invalid" = is.numeric(x) && length(x) > 0)
+    stopifnot("x must be numeric" = is.numeric(x), 
+              "x miust be non empty" = length(x) > 0)
     
     n <- length(X)
     m <- length(x)
