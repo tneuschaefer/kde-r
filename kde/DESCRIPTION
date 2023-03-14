@@ -1,0 +1,15 @@
+Package: kde
+Title: Kernel Density Estimation
+Version: 0.1
+Authors@R: c(
+    person("Thomas", "Frais", role = c("aut")),
+    person("Maren", "Heinemann", role = c("aut")),
+    person("Tobias", "Neuschäfer", email = "t.neuschaefer@stud.uni-heidelberg.de", role = c("aut", "cre")))
+Description: Various tools relating to Kernel Density Estimation
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
