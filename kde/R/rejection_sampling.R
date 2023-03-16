@@ -7,12 +7,12 @@
 #' @param proposal_dist the distribution function used to create samples from
 #'   \code{density}
 #' @param proposal_density the probability density function used to accept or discard samples
-#' @param m numeric scalar bigger one satisfying \code{sample_density(x) <= m*density(x)} 
+#' @param m numeric scalar bigger one satisfying \code{sample_density(x) <= m*density(x)}
 #' @param interval numeric interval used to calculate m if no m is given
 #'
-#' @details Rejection sampling uses \code{distribution} to draw samples and 
-#'   accepts/rejects these samples according to the densities \code{sample_density} 
-#'   and \code{density}, such that the resulting samples are \code{sample_density}-distributed. 
+#' @details Rejection sampling uses \code{distribution} to draw samples and
+#'   accepts/rejects these samples according to the densities \code{sample_density}
+#'   and \code{density}, such that the resulting samples are \code{sample_density}-distributed.
 #'
 #'   Many rejected samples result in longer runtimes. To prevent this \code{m} should be
 #'   chosen as small as possible, satisfying \code{sample_density(x) <=
@@ -27,26 +27,29 @@
 #' @source https://en.wikipedia.org/wiki/Rejection_sampling
 #'
 #' @examples
-#'   custom_den <- function(x) {
-#'     res <- (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)
-#'     res[x<0|x>1] <- 0
-#'     res
-#'   }
+#' custom_den <- function(x) {
+#'   res <- (3 / 2) * (x^3) + (11 / 8) * (x^2) + (1 / 6) * (x) + (1 / 12)
+#'   res[x < 0 | x > 1] <- 0
+#'   res
+#' }
 #'
-#'   custom_sample <- rejection_sample(custom_den, runif, dunif, 3.2)
-#'   x <- seq(-0.5, 1.5, by = 0.01)
-#'   y <- custom_den(x)
-#'   sample <- custom_sample(100)
+#' custom_sample <- rejection_sample(custom_den, runif, dunif, 3.2)
+#' x <- seq(-0.5, 1.5, by = 0.01)
+#' y <- custom_den(x)
+#' sample <- custom_sample(100)
 #'
-#'   plot(x, y, type = "l", main = "cutom_density: (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)",
-#'     y_lab = "density")
-#'   points(sample, rep(0, 100), col = "red", pch = "o")
-#'   legend("topleft", legend = c("custom_density", "sample"), col = c("black", "red"),
-#'     pch = c("|", "o"))
+#' plot(x, y,
+#'   type = "l", main = "cutom_density: (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)",
+#'   y_lab = "density"
+#' )
+#' points(sample, rep(0, 100), col = "red", pch = "o")
+#' legend("topleft",
+#'   legend = c("custom_density", "sample"), col = c("black", "red"),
+#'   pch = c("|", "o")
+#' )
 #'
 #' @export
 rejection_sampling <- function(sample_density, proposal_dist, proposal_density, m, interval) {
-
   # densities and distribution must be functions
   stopifnot(
     "sample_density must be a function" = is.function(sample_density),
@@ -62,26 +65,23 @@ rejection_sampling <- function(sample_density, proposal_dist, proposal_density, 
     )
     # in case the provided m is of length greater than 1
     m <- m[1]
-
   } else if (!missing(interval)) {
     # use interval to calculate m
 
     # check requirements for interval
-     stopifnot(
+    stopifnot(
       "interval must be numeric" = is.numeric(interval),
       "interval must be of length 2" = length(interval) == 2
     )
 
-    quot <- function(x) sample_density(x)/proposal_density(x)
+    quot <- function(x) sample_density(x) / proposal_density(x)
     m <- unlist(stats::optimize(quot, interval = interval, maximum = TRUE)[2])
-
   } else {
     stop("either m or interval must be provided")
   }
 
   # returning this function
   function(n) {
-
     # checking requirements for n
     stopifnot("n must be numeric" = is.numeric(n))
     n <- as.integer(n[1])
