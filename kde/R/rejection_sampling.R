@@ -1,94 +1,106 @@
-#' Rejection sampling
+#' Rejection Sampling
 #'
-#' @description \code{rejection_sample} creates a function that draws samples
+#' @description \code{rejection_sampling} creates a function that draws samples
 #'   from a given probabilty density function
 #'
 #' @param sample_density the probability density function to construct the sample
-#' @param distribution the distribution function used to create samples from
+#' @param proposal_dist the distribution function used to create samples from
 #'   \code{density}
-#' @param density the probability density function used to accept or discard samples
-#' @param M numeric scalar bigger one satisfying \code{sample_density(x) <= M*density(x)} 
-#' @param interval numeric interval used to calculate M if no M is given
-#' 
+#' @param proposal_density the probability density function used to accept or discard samples
+#' @param m numeric scalar bigger one satisfying \code{sample_density(x) <= m*density(x)} 
+#' @param interval numeric interval used to calculate m if no m is given
+#'
 #' @details Rejection sampling uses \code{distribution} to draw samples and 
 #'   accepts/rejects these samples according to the densities \code{sample_density} 
 #'   and \code{density}, such that the resulting samples are \code{sample_density}-distributed. 
-#'   
-#'   Many rejected samples result in longer runtimes. To prevent this \code{M} should be
+#'
+#'   Many rejected samples result in longer runtimes. To prevent this \code{m} should be
 #'   chosen as small as possible, satisfying \code{sample_density(x) <=
-#'   M*density(x)} for all \code{x}. 
-#'   
-#'   If no M is given \code{rejection_sample}
+#'   m*density(x)} for all \code{x}.
+#'
+#'   If no m is given \code{rejection_sample}
 #'   searches for a maximum of \code{sample_density/density} inside \code{interval}
-#'   
+#'
 #' @return A function taking a single numeric number \code{n} returning \code{n}
 #'   \code{sample_density}-distributed random numbers
-#'   
+#'
 #' @source https://en.wikipedia.org/wiki/Rejection_sampling
-#' 
-#' @examples 
+#'
+#' @examples
 #'   custom_den <- function(x) {
 #'     res <- (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)
 #'     res[x<0|x>1] <- 0
 #'     res
 #'   }
-#'   
+#'
 #'   custom_sample <- rejection_sample(custom_den, runif, dunif, 3.2)
 #'   x <- seq(-0.5, 1.5, by = 0.01)
 #'   y <- custom_den(x)
 #'   sample <- custom_sample(100)
-#'   
+#'
 #'   plot(x, y, type = "l", main = "cutom_density: (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)",
 #'     y_lab = "density")
 #'   points(sample, rep(0, 100), col = "red", pch = "o")
 #'   legend("topleft", legend = c("custom_density", "sample"), col = c("black", "red"),
 #'     pch = c("|", "o"))
-#' 
+#'
 #' @export
-rejection_sample <- function(sample_density, distribution, density, M = NULL,
-                             interval = NULL) {
+rejection_sampling <- function(sample_density, proposal_dist, proposal_density, m, interval) {
 
-  #Sample_density condition
-  stopifnot("Sample_density must be a function" = is.function(sample_density))
+  # densities and distribution must be functions
+  stopifnot(
+    "sample_density must be a function" = is.function(sample_density),
+    "proposal_density must be a function" = is.function(proposal_density),
+    "proposal_dist must be a function" = is.function(proposal_dist)
+  )
 
-  #Distribution condition
-  stopifnot("Density must be a function" = is.function(density),
-            "Distribution must be a function" = is.function(distribution))
-  
-  stopifnot("Either M or interval must be != NULL" = !is.null(M) || !is.null(interval))
+  if (!missing(m)) {
+    # check requirements for m
+    stopifnot(
+      "m must be numeric" = is.numeric(m),
+      "m must be >= 1" = m >= 1
+    )
+    # in case the provided m is of length greater than 1
+    m <- m[1]
 
-  #Upper Bound condition
-  if(!is.null(M)) stopifnot("M must be numeric" = is.numeric(M),
-                            "M must have length one" = length(M) == 1,
-                            "Must be > one" = M > 1)
-  #Interval condition
-  if(is.null(M)) stopifnot("interval must be numeric" = is.numeric(interval),
-                           "interval must be of length 2" = length(interval) == 2)
+  } else if (!missing(interval)) {
+    # use interval to calculate m
 
+    # check requirements for interval
+     stopifnot(
+      "interval must be numeric" = is.numeric(interval),
+      "interval must be of length 2" = length(interval) == 2
+    )
 
-  if(is.null(M)){
-    quot <- function(x) sample_density(x)/density(x)
-    M <- unlist(stats::optimize(quot, interval = interval, maximum = TRUE)[2])
+    quot <- function(x) sample_density(x)/proposal_density(x)
+    m <- unlist(stats::optimize(quot, interval = interval, maximum = TRUE)[2])
+
+  } else {
+    stop("either m or interval must be provided")
   }
 
-  if(M <= 1) M <- 1.1
-
+  # returning this function
   function(n) {
 
-    #Sampling condition
-    stopifnot("n must be numeric" = is.numeric(n),
-              "n must havee length one" = length(n) == 1)
+    # checking requirements for n
+    stopifnot("n must be numeric" = is.numeric(n))
+    n <- as.integer(n[1])
 
-    n <- as.integer(n)
-    u <- numeric(M*n)
-    sample <- numeric(M*n)
     accepted <- c()
 
-    while(length(accepted) < n) {
-      u <- stats::runif(M*n)
-      sample <- distribution(M*n)
-      accepted <- c(accepted, sample[u*M*density(sample) < sample_density(sample)])
+    # repeat until n values of the sample distribution have been found
+    while (length(accepted) < n) {
+      # uniformly pick u
+      u <- stats::runif(m * n)
+
+      # sample using the provided proposal distribution
+      sample <- proposal_dist(m * n)
+
+      # reject all values that are to large
+      accepted <- c(accepted, sample[u * m * proposal_density(sample) < sample_density(sample)])
     }
+
+    # return vector of length n
     accepted[1:n]
   }
 }
