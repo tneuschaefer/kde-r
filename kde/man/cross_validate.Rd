@@ -2,13 +2,57 @@
 % Please edit documentation in R/cross_validation.R
 \name{cross_validate}
 \alias{cross_validate}
-\title{Title}
+\title{Cross-Validation}
+\source{
+Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
+}
 \usage{
-cross_validate(X, K = stats::dnorm, n = 40L, N = 100)
+cross_validate(X, K, n = 40L, N = 100)
 }
 \arguments{
-\item{N}{}
+\item{X}{numeric vector of the observation sample}
+
+\item{K}{kernel function used for the kernel density estimation}
+
+\item{n}{number of bandwidths to be optimized from. \code{cross_validate}
+selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
+
+\item{N}{number of subdivisions used in discretization of integrals}
+}
+\value{
+The estimatet optimal bandwidth
 }
 \description{
-Title
+\code{cross_validate} estimates an optimal bandwidth
+for kernel density estimation using the cross-validation method
+}
+\details{
+The cross-validation method tries to minimize the mean squared
+integrated error (MISE) of a kernel density estimator
+
+\code{cross_validation} approximates the estimator-dependent part of the
+risk and selects the bandwidth with the minimal risk
+}
+\examples{
+
+  X <- rnorm(1000)
+  h <- cross_validate(X, dnorm)
+  f <- kernel_estimator(X, dnorm, h)
+  
+  a <- min(X)
+  b <- max(X)
+  ab <- seq(a, b, length.out = 100)
+  
+  plot(ab, dnorm(ab), type = "l")
+  line(ab, f(ab), col = "red")
+  legend("topleft", legend = c("true", "estimated h"), col = c("black", "red"),
+         pch = "|")
+
+}
+\seealso{
+\code{\link{kernel_estimator}} for more information about kernel
+density estimation
+
+\code{\link{cross_validation}} and for other automatic bandwidth-selection
+algorithms
 }
