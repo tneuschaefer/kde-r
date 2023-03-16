@@ -4,7 +4,7 @@
 \alias{cross_validate}
 \title{Title}
 \usage{
-cross_validate(X, K = dnorm, n = 40L, N = 100)
+cross_validate(X, K = stats::dnorm, n = 40L, N = 100)
 }
 \arguments{
 \item{N}{}

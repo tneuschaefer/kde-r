@@ -34,7 +34,7 @@ rejection_sample <- function(sample_density, distribution, density,
   }
 
   if(is.null(M)){
-    M <- unlist(optimize(quot, c(min(X),max(X)), maximum = TRUE)[1]) #WIP
+    M <- unlist(stats::optimize(quot, c(min(X),max(X)), maximum = TRUE)[1]) #WIP
   }
 
   if(M < 1) M <- 1.1
@@ -59,7 +59,7 @@ rejection_sample <- function(sample_density, distribution, density,
     accepted <- c()
 
     while(length(accepted) < n) {
-      u <- runif(M*n)
+      u <- stats::runif(M*n)
       sample <- distribution(M*n)
       accepted <- c(accepted, sample[u*M*density(sample) < sample_density(sample)])
     }

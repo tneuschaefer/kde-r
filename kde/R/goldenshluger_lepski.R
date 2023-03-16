@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-goldenshluger_lepski <- function(X, K = dnorm, n = 40, kappa = 1.2, N = 100L) {
+goldenshluger_lepski <- function(X, K = stats::dnorm, n = 40, kappa = 1.2, N = 100L) {
 
   #Sample condition
   stopifnot("X must be a numeric" = is.numeric(X),

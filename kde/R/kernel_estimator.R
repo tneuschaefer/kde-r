@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-kernel_estimator <- function(X, K = dnorm, h = 1) {
+kernel_estimator <- function(X, K = stats::dnorm, h = 1) {
 
   #Sample condition
   stopifnot("X must be a numeric" = is.numeric(X),

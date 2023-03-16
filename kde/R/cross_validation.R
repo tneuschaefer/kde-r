@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-cross_validate <- function(X, K = dnorm, n = 40L, N = 100) {
+cross_validate <- function(X, K = stats::dnorm, n = 40L, N = 100) {
 
   #Sample condition
   stopifnot("X must be a numeric" = is.numeric(X),
