@@ -1,5 +1,15 @@
-library(stats)
-
+#' Title
+#'
+#' @param X
+#' @param K
+#' @param n
+#' @param kappa
+#' @param N
+#'
+#' @return
+#' @export
+#'
+#' @examples
 goldenshluger_lepski <- function(X, K = dnorm, n = 40, kappa = 1.2, N = 100L) {
 
   #Sample condition
@@ -62,11 +72,3 @@ goldenshluger_lepski <- function(X, K = dnorm, n = 40, kappa = 1.2, N = 100L) {
 
   which.min(A + 2*kappa*V)/N
 }
-
-#Beispiel
-set.seed(10)
-n <- 100
-X <- rnorm(n)
-h <- goldenshluger_lepski(X)
-
-

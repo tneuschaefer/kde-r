@@ -1,5 +1,14 @@
-library(stats)
-
+#' Title
+#'
+#' @param X
+#' @param K
+#' @param n
+#' @param N
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cross_validate <- function(X, K = dnorm, n = 40L, N = 100) {
 
   #Sample condition
@@ -47,26 +56,3 @@ cross_validate <- function(X, K = dnorm, n = 40L, N = 100) {
   }
   which.min(crit)/n
 }
-
-#Beispiel
-set.seed(10)
-n <- 1000
-X <- rnorm(n)
-h <- cross_validate(X)
-
-hnorm_estim <- kernel_estimator(X, dnorm, h)
-norm_estim(10)
-dnorm(10)
-norm_estim(c(0,1,-1))
-dnorm(c(0,1,-1))
-
-#Plotten
-a <- min(X)
-b <- max(X)
-
-x_plot <- seq(a, b, length.out = 100)
-x_estim <- norm_estim(x_plot)
-x_real <- dnorm(x_plot)
-
-plot(x_plot, x_real, type = "l", col = "red", lwd = 2, xlab = "X", ylab = "Density")
-lines(x_plot, x_estim, col = "blue")

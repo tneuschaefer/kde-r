@@ -1,5 +1,15 @@
-
-
+#' Title
+#'
+#' @param X
+#' @param K
+#' @param n
+#' @param lambda
+#' @param N
+#'
+#' @return
+#' @export
+#'
+#' @examples
 pco_method <- function(X, K, n = 40, lambda = 1, N = 100L) {
 
   #Sample condition
@@ -54,26 +64,3 @@ pco_method <- function(X, K, n = 40, lambda = 1, N = 100L) {
   k <- which.min(risk)
   k/n
 }
-
-#Beispiel
-set.seed(10)
-n <- 1000
-X <- rnorm(n)
-h <- cross_validate(X)
-
-hnorm_estim <- kernel_estimator(X, dnorm, 0.3)
-norm_estim(10)
-dnorm(10)
-norm_estim(c(0,1,-1))
-dnorm(c(0,1,-1))
-
-#Plotten
-a <- min(X)
-b <- max(X)
-
-x_plot <- seq(a, b, length.out = 100)
-x_estim <- norm_estim(x_plot)
-x_real <- dnorm(x_plot)
-
-plot(x_plot, x_real, type = "l", col = "red", lwd = 2, xlab = "X", ylab = "Density")
-lines(x_plot, x_estim, col = "blue")

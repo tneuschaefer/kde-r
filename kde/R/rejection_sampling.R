@@ -1,5 +1,16 @@
-
-
+#' Title
+#'
+#' @param sample_density
+#' @param distribution
+#' @param density
+#' @param M
+#' @param lower
+#' @param upper
+#'
+#' @return
+#' @export
+#'
+#' @examples
 rejection_sample <- function(sample_density, distribution, density,
                              M = NULL, lower = NULL, upper = NULL) {
 
@@ -28,6 +39,14 @@ rejection_sample <- function(sample_density, distribution, density,
 
   if(M < 1) M <- 1.1
 
+#' Title
+#'
+#' @param n
+#'
+#' @return
+#' @export
+#'
+#' @examples
   function(n) {
 
     #Sampling condition
@@ -47,12 +66,3 @@ rejection_sample <- function(sample_density, distribution, density,
     accepted[1:n]
   }
 }
-
-#Beispiel
-snorm <- rejection_sample(dnorm, rnorm, dnorm)
-X <- snorm(100)
-mean(X)
-
-sunif <- rejection_sample(dnorm, runif, dunif)
-X <- snorm(100)
-mean(X)
