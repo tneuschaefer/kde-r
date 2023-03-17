@@ -5,6 +5,7 @@
 #'
 #' @param x numeric vector of the observation sample
 #' @param kernel kernel function, default is Gaussian kernel
+#' @param built_in choose a built-in kernel instead of providing one yourself
 #' @param bandwith non-negative numeric scalar, the bandwidth of the estimator
 #'  default is 1
 #' @param na.rm logical; if TRUE, missing values will be removed from x
@@ -41,32 +42,45 @@
 #' )
 #'
 #' @export
-kernel_estimator <- function(
-        x, kernel = stats::dnorm,
-        built_in = c("gaussian", "epanechnikow", "rectangular", "triangular", "biweight", "silverman"),
-        bandwith = 1, na.rm = FALSE) {
-    # remove NA values if na.rm is set to TRUE
-    if (na.rm) x <- x[!is.na(x)]
+kernel_estimator <- function(x, kernel = stats::dnorm,
+                             built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"),
+                             bandwith = 1, na.rm = FALSE) {
+  # remove NA values if na.rm is set to TRUE
+  if (na.rm) x <- x[!is.na(x)]
 
-    # ensuring requirements
-    stopifnot(
-        "x must be a numeric" = is.numeric(x),
-        "x must not be empty" = length(x) > 0,
-        "kernel must be a function" = is.function(kernel),
-        "bandwidth must be numeric" = is.numeric(bandwith),
-        "bandwidth must be greater than 0" = bandwith > 0,
-        "x contains missing values" = anyNA(x)
+  # ensuring requirements
+  stopifnot(
+    "x must be a numeric" = is.numeric(x),
+    "x must not be empty" = length(x) > 0,
+    "kernel must be a function" = is.function(kernel),
+    "bandwidth must be numeric" = is.numeric(bandwith),
+    "bandwidth must be greater than 0" = bandwith > 0,
+    "x contains missing values" = !anyNA(x)
+  )
+
+  # in case the provided bandwidth is of length greater than 1
+  bandwith <- bandwith[1]
+
+  # if built_in was provided use that as the kernel
+  if (!missing(built_in)) {
+    # match the argument for built_in
+    built_in <- match.arg(built_in)
+    kernel <- switch(built_in,
+      gaussian = stats::dnorm,
+      epanechnikov = epanechnikov(),
+      rectangular = rectangular(),
+      triangular = triangular(),
+      biweight = biweight(),
+      silverman = silverman()
     )
-
-    # in case the provided bandwidth is of length greater than 1
-    bandwith <- bandwith[1]
+  }
 
   # TODO redo all of this shit
-    # returning estimator function
-    function(t) {
-        stopifnot(
-          "x must be numeric" = is.numeric(t),
-        "x miust be non empty" = length(t) > 0
+  # returning estimator function
+  function(t) {
+    stopifnot(
+      "x must be numeric" = is.numeric(t),
+      "x miust be non empty" = length(t) > 0
     )
 
     n <- length(x)
@@ -81,4 +95,65 @@ kernel_estimator <- function(
     }
     apply(Mat, 2, mean)
   }
+}
+
+#' Indicator function
+#'
+#' @param u real number
+#'
+#' @return 1 if -1 <= u <= 1, 0 otherwise
+ind <- function(u) {
+  return(ifelse(abs(u) <= 1, 1, 0))
+}
+
+
+#' Epanechnikov kernel
+#'
+#' @param u real number
+#'
+#' @return value of Epanechnikov kernel for u
+#' @export
+epanechnikov <- function(u) {
+  return(0.75 * (1 - u^2) * ind(u))
+}
+
+#' Rectangular Kernel
+#'
+#' @param u real number
+#'
+#' @return value of Rectangular kernel for u
+#' @export
+rectangular <- function(u) {
+  return(0.5 * ind(u))
+}
+
+
+#' Triangular Kernel
+#'
+#' @param u real number
+#'
+#' @return value of Triangular kernel for u
+#' @export
+triangular <- function(u) {
+  return((1 - abs(u)) * ind(u))
+}
+
+#' Biweight Kernel
+#'
+#' @param u real number
+#'
+#' @return value of Biweight kernel for u
+#' @export
+biweight <- function(u) {
+  return(0.9375 * (1 - u^2)^2 * ind(u))
+}
+
+#' Silverman
+#'
+#' @param u real number
+#'
+#' @return value of Silverman kernel for u
+#' @export
+silverman <- function(u) {
+  return(0.5 * exp(-abs(u) / sqrt(2)) * sin(abs(u) / sqrt(2) + pi / 4))
 }

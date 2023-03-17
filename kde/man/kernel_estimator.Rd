@@ -7,15 +7,26 @@
 Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 }
 \usage{
-kernel_estimator(x, kernel = stats::dnorm, bandwith = 1)
+kernel_estimator(
+  x,
+  kernel = stats::dnorm,
+  built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
+    "silverman"),
+  bandwith = 1,
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{x}{numeric vector of the observation sample}
 
 \item{kernel}{kernel function, default is Gaussian kernel}
 
+\item{built_in}{choose a built-in kernel instead of providing one yourself}
+
 \item{bandwith}{non-negative numeric scalar, the bandwidth of the estimator
 default is 1}
+
+\item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
 \value{
 A function which estimates the probability density function of the
