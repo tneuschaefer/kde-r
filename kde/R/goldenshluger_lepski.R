@@ -1,17 +1,44 @@
-#' Title
+#' Goldenshluger Lepski Method
 #'
-#' @param x
-#' @param kernel
-#' @param n
-#' @param lambda
-#' @param N
+#' @description \code{goldenshluger_lepski} estimates an optimal bandwidth
+#'   for kernel density estimation using the Goldenshluger Lepski Method
+#'
+#' @param x numeric vector of the observation sample
+#' @param kernel kernel function used for kernel density estimation
+#' @param n number of bandwidths to be optimized from. \code{goldenshluger_lepski}
+#'    selects a bandwidth contained in  (1/n, 2/n, ..., 1)
+#' @param lambda positive scalar used as tuning parameter
+#' @param N number of subdivisions used in discretization of integrals
 #' @param built_in choose one of the built-in kernels instead of providing one yourself
 #' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
-#' @return
+#' @return The estimatet optimal bandwidth
+#'
+#' @seealso \code{\link{kernel_estimator}} for more information about kernel
+#'   density estimation
+#'
+#'   \code{\link{cross_validation}} and \code{\link{pco_method}} for other
+#'   automatic bandwidth-selection algorithms
+#'
+#' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
 #' @examples
-#'  
+#'
+#' x <- stats::rnorm(100)
+#' h <- goldenshluger_lepski(x, kernel = stats::dnorm)
+#' f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
+#'
+#' a <- min(x)
+#' b <- max(x)
+#' ab <- seq(a, b, length.out = 100)
+#'
+#' plot(ab, stats::dnorm(ab), type = "l")
+#' lines(ab, f(ab), col = "red")
+#' legend("topleft",
+#'   legend = c("true", "estimated h"), col = c("black", "red"),
+#'   pch = "|"
+#' )
+#'
 #' @include kernel_estimator.R
 #' @export
 goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, lambda = 1.2, N = 100L,

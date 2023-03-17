@@ -9,7 +9,7 @@ Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 \usage{
 cross_validation(
   x,
-  kernel,
+  kernel = stats::dnorm,
   n = 40L,
   N = 100L,
   built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
@@ -20,6 +20,8 @@ cross_validation(
 \arguments{
 \item{x}{numeric vector of the observation sample}
 
+\item{kernel}{kernel function used for the kernel density estimation}
+
 \item{n}{number of bandwidths to be optimized from. \code{cross_validation}
 selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
 
@@ -28,8 +30,6 @@ selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
 \item{built_in}{choose one of the built-in kernels instead of providing one yourself}
 
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
-
-\item{K}{kernel function used for the kernel density estimation}
 }
 \value{
 The estimatet optimal bandwidth
@@ -47,7 +47,7 @@ risk and selects the bandwidth with the minimal risk
 }
 \examples{
 
-x <- stats::rnorm(1000)
+x <- stats::rnorm(100)
 h <- cross_validation(x, kernel = stats::dnorm)
 f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 
@@ -56,7 +56,7 @@ b <- max(x)
 ab <- seq(a, b, length.out = 100)
 
 plot(ab, stats::dnorm(ab), type = "l")
-line(ab, f(ab), col = "red")
+lines(ab, f(ab), col = "red")
 legend("topleft",
   legend = c("true", "estimated h"), col = c("black", "red"),
   pch = "|"
@@ -67,6 +67,6 @@ legend("topleft",
 \code{\link{kernel_estimator}} for more information about kernel
 density estimation
 
-\code{\link{cross_validation}} and for other automatic bandwidth-selection
-algorithms
+\code{\link{goldenshluger_lepski}} and \code{\link{pco_method}} for other
+automatic bandwidth-selection algorithms
 }

@@ -2,7 +2,10 @@
 % Please edit documentation in R/goldenshluger_lepski.R
 \name{goldenshluger_lepski}
 \alias{goldenshluger_lepski}
-\title{Title}
+\title{Goldenshluger Lepski Method}
+\source{
+Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
+}
 \usage{
 goldenshluger_lepski(
   x,
@@ -16,10 +19,50 @@ goldenshluger_lepski(
 )
 }
 \arguments{
+\item{x}{numeric vector of the observation sample}
+
+\item{kernel}{kernel function used for kernel density estimation}
+
+\item{n}{number of bandwidths to be optimized from. \code{goldenshluger_lepski}
+selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
+
+\item{lambda}{positive scalar used as tuning parameter}
+
+\item{N}{number of subdivisions used in discretization of integrals}
+
 \item{built_in}{choose one of the built-in kernels instead of providing one yourself}
 
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
+\value{
+The estimatet optimal bandwidth
+}
 \description{
-Title
+\code{goldenshluger_lepski} estimates an optimal bandwidth
+for kernel density estimation using the Goldenshluger Lepski Method
+}
+\examples{
+
+x <- stats::rnorm(100)
+h <- goldenshluger_lepski(x, kernel = stats::dnorm)
+f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
+
+a <- min(x)
+b <- max(x)
+ab <- seq(a, b, length.out = 100)
+
+plot(ab, stats::dnorm(ab), type = "l")
+lines(ab, f(ab), col = "red")
+legend("topleft",
+  legend = c("true", "estimated h"), col = c("black", "red"),
+  pch = "|"
+)
+
+}
+\seealso{
+\code{\link{kernel_estimator}} for more information about kernel
+density estimation
+
+\code{\link{cross_validation}} and \code{\link{pco_method}} for other
+automatic bandwidth-selection algorithms
 }

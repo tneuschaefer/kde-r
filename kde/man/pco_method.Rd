@@ -10,7 +10,7 @@ kernel density estimation (2017), https://arxiv.org/abs/1607.05091
 \usage{
 pco_method(
   x,
-  kernel,
+  kernel = stats::dnorm,
   n = 40,
   lambda = 1,
   N = 100L,
@@ -64,16 +64,16 @@ two terms, therefor the name \code{penalized comparison to overfitting}
 }
 \examples{
 
-x <- stats::rnorm(1000)
+x <- stats::rnorm(100)
 h <- pco_method(x, kernel = stats::dnorm)
 f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 
-a <- min(X)
-b <- max(X)
+a <- min(x)
+b <- max(x)
 ab <- seq(a, b, length.out = 100)
 
 plot(ab, stats::dnorm(ab), type = "l")
-line(ab, f(ab), col = "red")
+lines(ab, f(ab), col = "red")
 legend("topleft",
   legend = c("true", "estimated h"), col = c("black", "red"),
   pch = "|"
@@ -84,6 +84,6 @@ legend("topleft",
 \code{\link{kernel_estimator}} for more information about kernel
 density estimation
 
-\code{\link{cross_validation}} and for other automatic bandwidth-selection
-algorithms
+\code{\link{cross_validation}} and \code{\link{goldenshluger_lepski}} for
+other automatic bandwidth-selection algorithms
 }

@@ -4,7 +4,7 @@
 #'   for kernel density estimation using the cross-validation method
 #'
 #' @param x numeric vector of the observation sample
-#' @param K kernel function used for the kernel density estimation
+#' @param kernel kernel function used for the kernel density estimation
 #' @param n number of bandwidths to be optimized from. \code{cross_validation}
 #'   selects a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param N number of subdivisions used in discretization of integrals
@@ -22,14 +22,14 @@
 #' @seealso \code{\link{kernel_estimator}} for more information about kernel
 #'   density estimation
 #'
-#'   \code{\link{cross_validation}} and for other automatic bandwidth-selection
-#'   algorithms
+#'   \code{\link{goldenshluger_lepski}} and \code{\link{pco_method}} for other
+#'   automatic bandwidth-selection algorithms
 #'
 #' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
 #' @examples
 #'
-#' x <- stats::rnorm(1000)
+#' x <- stats::rnorm(100)
 #' h <- cross_validation(x, kernel = stats::dnorm)
 #' f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 #'
@@ -38,7 +38,7 @@
 #' ab <- seq(a, b, length.out = 100)
 #'
 #' plot(ab, stats::dnorm(ab), type = "l")
-#' line(ab, f(ab), col = "red")
+#' lines(ab, f(ab), col = "red")
 #' legend("topleft",
 #'   legend = c("true", "estimated h"), col = c("black", "red"),
 #'   pch = "|"
