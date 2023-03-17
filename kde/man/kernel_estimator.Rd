@@ -12,7 +12,7 @@ kernel_estimator(
   kernel = stats::dnorm,
   built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
     "silverman"),
-  bandwith = 1,
+  bandwidth = 1,
   na.rm = FALSE
 )
 }
@@ -23,7 +23,7 @@ kernel_estimator(
 
 \item{built_in}{choose a built-in kernel instead of providing one yourself}
 
-\item{bandwith}{non-negative numeric scalar, the bandwidth of the estimator
+\item{bandwidth}{non-negative numeric scalar, the bandwidth of the estimator
 default is 1}
 
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
@@ -40,11 +40,11 @@ the provided sample, kernel and bandwidth
 The function given by \code{kernel_estimator} is vectorized
 }
 \examples{
-X <- rnorm(100)
+x <- rnorm(100)
 
-f1 <- kernel_estimator(X, dnorm, 1)
-f2 <- kernel_estimator(X, dnorm, 0.5)
-f3 <- kernel_estimator(X, dnorm, 0.1)
+f1 <- kernel_estimator(x, kernel = dnorm, bandwidth = 1)
+f2 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.5)
+f3 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.1)
 
 a <- min(X)
 b <- max(X)

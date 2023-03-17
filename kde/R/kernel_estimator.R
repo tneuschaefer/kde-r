@@ -21,11 +21,11 @@
 #' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
 #' @examples
-#' X <- rnorm(100)
+#' x <- rnorm(100)
 #'
-#' f1 <- kernel_estimator(X, dnorm, 1)
-#' f2 <- kernel_estimator(X, dnorm, 0.5)
-#' f3 <- kernel_estimator(X, dnorm, 0.1)
+#' f1 <- kernel_estimator(x, kernel = dnorm, bandwidth = 1)
+#' f2 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.5)
+#' f3 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.1)
 #'
 #' a <- min(X)
 #' b <- max(X)

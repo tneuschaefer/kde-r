@@ -1,6 +1,6 @@
-#' Rejection Sampling
+#' Rejection Sampling Factory
 #'
-#' @description \code{rejection_sampling} creates a function that draws samples
+#' @description \code{rejection_sampling_factory} creates a function that can draw samples
 #'   from a given probabilty density function
 #'
 #' @param sample_density the probability density function to construct the sample
@@ -18,7 +18,7 @@
 #'   chosen as small as possible, satisfying \code{sample_density(x) <=
 #'   m*density(x)} for all \code{x}.
 #'
-#'   If no m is given \code{rejection_sample}
+#'   If no m is given \code{rejection_sampling_factory}
 #'   searches for a maximum of \code{sample_density/density} inside \code{interval}
 #'
 #' @return A function taking a single numeric number \code{n} returning \code{n}
@@ -33,7 +33,7 @@
 #'   res
 #' }
 #'
-#' custom_sample <- rejection_sample(custom_den, runif, dunif, 3.2)
+#' custom_sample <- rejection_sampling_factory(custom_den, runif, dunif, 3.2)
 #' x <- seq(-0.5, 1.5, by = 0.01)
 #' y <- custom_den(x)
 #' sample <- custom_sample(100)
@@ -49,7 +49,7 @@
 #' )
 #'
 #' @export
-rejection_sampling <- function(sample_density, proposal_dist, proposal_density, m, interval) {
+rejection_sampling_factory <- function(sample_density, proposal_dist, proposal_density, m, interval) {
   # densities and distribution must be functions
   stopifnot(
     "sample_density must be a function" = is.function(sample_density),
@@ -103,4 +103,56 @@ rejection_sampling <- function(sample_density, proposal_dist, proposal_density, 
     # return vector of length n
     accepted[1:n]
   }
+}
+
+#' Rejection Sampling Factory
+#'
+#' @description \code{rejection_sampling} draws samples from a given probabilty density function
+#'
+#' @param n size of the sample to be drawn
+#' @param sample_density the probability density function to construct the sample
+#' @param proposal_dist the distribution function used to create samples from
+#'   \code{density}
+#' @param proposal_density the probability density function used to accept or discard samples
+#' @param m numeric scalar bigger one satisfying \code{sample_density(x) <= m*density(x)}
+#' @param interval numeric interval used to calculate m if no m is given
+#'
+#' @details Rejection sampling uses \code{distribution} to draw samples and
+#'   accepts/rejects these samples according to the densities \code{sample_density}
+#'   and \code{density}, such that the resulting samples are \code{sample_density}-distributed.
+#'
+#'   Many rejected samples result in longer runtimes. To prevent this \code{m} should be
+#'   chosen as small as possible, satisfying \code{sample_density(x) <=
+#'   m*density(x)} for all \code{x}.
+#'
+#'   If no m is given \code{rejection_sampling}
+#'   searches for a maximum of \code{sample_density/density} inside \code{interval}
+#'
+#' @return \code{n} \code{sample_density}-distributed random numbers
+#'
+#' @examples
+#' custom_den <- function(x) {
+#'   res <- (3 / 2) * (x^3) + (11 / 8) * (x^2) + (1 / 6) * (x) + (1 / 12)
+#'   res[x < 0 | x > 1] <- 0
+#'   res
+#' }
+#'
+#' sample <- rejection_sampling(100, custom_den, runif, dunif, 3.2)
+#' x <- seq(-0.5, 1.5, by = 0.01)
+#' y <- custom_den(x)
+#'
+#' plot(x, y,
+#'   type = "l", main = "cutom_density: (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)",
+#'   y_lab = "density"
+#' )
+#' points(sample, rep(0, 100), col = "red", pch = "o")
+#' legend("topleft",
+#'   legend = c("custom_density", "sample"), col = c("black", "red"),
+#'   pch = c("|", "o")
+#' )
+#'
+#' @export
+rejection_sampling <- function(n, sample_density, proposal_dist, proposal_density, m, interval) {
+  sampling_function <- rejection_sampling_factory(sample_density, proposal_dist, proposal_density, m, interval)
+  sampling_function(n)
 }

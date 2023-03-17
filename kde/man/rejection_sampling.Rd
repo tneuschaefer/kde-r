@@ -2,12 +2,10 @@
 % Please edit documentation in R/rejection_sampling.R
 \name{rejection_sampling}
 \alias{rejection_sampling}
-\title{Rejection Sampling}
-\source{
-https://en.wikipedia.org/wiki/Rejection_sampling
-}
+\title{Rejection Sampling Factory}
 \usage{
 rejection_sampling(
+  n,
   sample_density,
   proposal_dist,
   proposal_density,
@@ -16,6 +14,8 @@ rejection_sampling(
 )
 }
 \arguments{
+\item{n}{size of the sample to be drawn}
+
 \item{sample_density}{the probability density function to construct the sample}
 
 \item{proposal_dist}{the distribution function used to create samples from
@@ -28,12 +28,10 @@ rejection_sampling(
 \item{interval}{numeric interval used to calculate m if no m is given}
 }
 \value{
-A function taking a single numeric number \code{n} returning \code{n}
-\code{sample_density}-distributed random numbers
+\code{n} \code{sample_density}-distributed random numbers
 }
 \description{
-\code{rejection_sampling} creates a function that draws samples
-from a given probabilty density function
+\code{rejection_sampling} draws samples from a given probabilty density function
 }
 \details{
 Rejection sampling uses \code{distribution} to draw samples and
@@ -44,25 +42,28 @@ Many rejected samples result in longer runtimes. To prevent this \code{m} should
 chosen as small as possible, satisfying \code{sample_density(x) <=
   m*density(x)} for all \code{x}.
 
-If no m is given \code{rejection_sample}
+If no m is given \code{rejection_sampling}
 searches for a maximum of \code{sample_density/density} inside \code{interval}
 }
 \examples{
-  custom_den <- function(x) {
-    res <- (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)
-    res[x<0|x>1] <- 0
-    res
-  }
+custom_den <- function(x) {
+  res <- (3 / 2) * (x^3) + (11 / 8) * (x^2) + (1 / 6) * (x) + (1 / 12)
+  res[x < 0 | x > 1] <- 0
+  res
+}
 
-  custom_sample <- rejection_sample(custom_den, runif, dunif, 3.2)
-  x <- seq(-0.5, 1.5, by = 0.01)
-  y <- custom_den(x)
-  sample <- custom_sample(100)
+sample <- rejection_sampling(100, custom_den, runif, dunif, 3.2)
+x <- seq(-0.5, 1.5, by = 0.01)
+y <- custom_den(x)
 
-  plot(x, y, type = "l", main = "cutom_density: (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)",
-    y_lab = "density")
-  points(sample, rep(0, 100), col = "red", pch = "o")
-  legend("topleft", legend = c("custom_density", "sample"), col = c("black", "red"),
-    pch = c("|", "o"))
+plot(x, y,
+  type = "l", main = "cutom_density: (3/2)*(x^3)+(11/8)*(x^2)+(1/6)*(x)+(1/12)",
+  y_lab = "density"
+)
+points(sample, rep(0, 100), col = "red", pch = "o")
+legend("topleft",
+  legend = c("custom_density", "sample"), col = c("black", "red"),
+  pch = c("|", "o")
+)
 
 }
