@@ -33,7 +33,7 @@
 #'   res
 #' }
 #'
-#' custom_sample <- rejection_sampling_factory(custom_den, runif, dunif, 3.2)
+#' custom_sample <- rejection_sampling_factory(custom_den, stats::runif, stats::dunif, 3.2)
 #' x <- seq(-0.5, 1.5, by = 0.01)
 #' y <- custom_den(x)
 #' sample <- custom_sample(100)

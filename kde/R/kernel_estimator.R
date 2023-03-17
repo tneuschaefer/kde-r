@@ -21,17 +21,17 @@
 #' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
 #' @examples
-#' x <- rnorm(100)
+#' x <- stats::rnorm(100)
 #'
-#' f1 <- kernel_estimator(x, kernel = dnorm, bandwidth = 1)
-#' f2 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.5)
-#' f3 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.1)
+#' f1 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 1)
+#' f2 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 0.5)
+#' f3 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 0.1)
 #'
 #' a <- min(x)
 #' b <- max(x)
 #' ab <- seq(a, b, length.out = 100)
 #'
-#' plot(ab, dnorm(ab), type = "l", xlab = "x", ylab = "density")
+#' plot(ab, stats::dnorm(ab), type = "l", xlab = "x", ylab = "density")
 #' lines(ab, f1(ab), col = "red")
 #' lines(ab, f2(ab), col = "blue")
 #' lines(ab, f3(ab), col = "green")

@@ -8,12 +8,12 @@ Lacour et al, Estimator selection: a new method with applications to
 kernel density estimation (2017), https://arxiv.org/abs/1607.05091
 }
 \usage{
-pco_method(X, K, n = 40, lambda = 1, N = 100L)
+pco_method(x, kernel, n = 40, lambda = 1, N = 100L)
 }
 \arguments{
-\item{X}{numeric vector of the observation sample}
+\item{x}{numeric vector of the observation sample}
 
-\item{K}{kernel function used for kernel density estimation}
+\item{kernel}{kernel function used for kernel density estimation}
 
 \item{n}{number of bandwidths to be optimized from. \code{pco_method} selects
 a bandwidth contained in  (1/n, 2/n, ..., 1)}
@@ -51,15 +51,15 @@ two terms, therefor the name \code{penalized comparison to overfitting}
 }
 \examples{
 
-X <- rnorm(1000)
-h <- pco_method(X, dnorm)
-f <- kernel_estimator(X, kernel = dnorm, bandwidth = h)
+x <- stats::rnorm(1000)
+h <- pco_method(x, kernel = stats::dnorm)
+f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 
 a <- min(X)
 b <- max(X)
 ab <- seq(a, b, length.out = 100)
 
-plot(ab, dnorm(ab), type = "l")
+plot(ab, stats::dnorm(ab), type = "l")
 line(ab, f(ab), col = "red")
 legend("topleft",
   legend = c("true", "estimated h"), col = c("black", "red"),

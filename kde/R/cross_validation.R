@@ -3,7 +3,7 @@
 #' @description \code{cross_validation} estimates an optimal bandwidth
 #'   for kernel density estimation using the cross-validation method
 #'
-#' @param X numeric vector of the observation sample
+#' @param x numeric vector of the observation sample
 #' @param K kernel function used for the kernel density estimation
 #' @param n number of bandwidths to be optimized from. \code{cross_validation}
 #'   selects a bandwidth contained in  (1/n, 2/n, ..., 1)
@@ -27,15 +27,15 @@
 #'
 #' @examples
 #'
-#' X <- rnorm(1000)
-#' h <- cross_validation(X, dnorm)
-#' f <- kernel_estimator(X, kernel = dnorm, bandwidth = h)
+#' x <- stats::rnorm(1000)
+#' h <- cross_validation(x, kernel = stats::dnorm)
+#' f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 #'
-#' a <- min(X)
-#' b <- max(X)
+#' a <- min(x)
+#' b <- max(x)
 #' ab <- seq(a, b, length.out = 100)
 #'
-#' plot(ab, dnorm(ab), type = "l")
+#' plot(ab, stats::dnorm(ab), type = "l")
 #' line(ab, f(ab), col = "red")
 #' legend("topleft",
 #'   legend = c("true", "estimated h"), col = c("black", "red"),
@@ -45,15 +45,15 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-cross_validation <- function(X, K, n = 40L, N = 100) {
+cross_validation <- function(x, kernel, n = 40L, N = 100) {
   # Sample condition
   stopifnot(
-    "X must be a numeric" = is.numeric(X),
-    "X must be a non empty" = length(X) > 0
+    "X must be a numeric" = is.numeric(x),
+    "X must be a non empty" = length(x) > 0
   )
 
   # Kernel condition
-  stopifnot("K is not a function" = is.function(K))
+  stopifnot("K is not a function" = is.function(kernel))
 
   # Bandwidth condition
   stopifnot(
@@ -68,18 +68,18 @@ cross_validation <- function(X, K, n = 40L, N = 100) {
   )
 
   n <- as.integer(n)
-  a <- min(X)
-  b <- max(X)
+  a <- min(x)
+  b <- max(x)
   ab <- seq(a, b, N)
 
-  m <- length(X)
+  m <- length(x)
   estimf <- matrix(0, n, N)
   Mat <- array(0, c(m, m, n))
   crit <- rep(0, n)
 
   for (k in 1:n) {
     h <- k / n
-    f <- kernel_estimator(X, K, h)
+    f <- kernel_estimator(x, kernel, h)
     estimf[k, ] <- f(ab)
   }
 
@@ -87,7 +87,7 @@ cross_validation <- function(X, K, n = 40L, N = 100) {
     h <- k / n
     for (i in 1:m) {
       for (j in 1:m) {
-        if (i != j) Mat[i, j, k] <- K((X[i] - X[j]) / h) / h
+        if (i != j) Mat[i, j, k] <- kernel((x[i] - x[j]) / h) / h
       }
     }
   }

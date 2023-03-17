@@ -4,7 +4,7 @@
 \alias{goldenshluger_lepski}
 \title{Title}
 \usage{
-goldenshluger_lepski(X, K = dnorm, n = 40, kappa = 1.2, N = 100L)
+goldenshluger_lepski(x, kernel = stats::dnorm, n = 40, kappa = 1.2, N = 100L)
 }
 \arguments{
 \item{N}{}

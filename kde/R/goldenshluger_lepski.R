@@ -10,15 +10,15 @@
 #' @export
 #'
 #' @examples
-goldenshluger_lepski <- function(X, K = dnorm, n = 40, kappa = 1.2, N = 100L) {
+goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, kappa = 1.2, N = 100L) {
   # Sample condition
   stopifnot(
-    "X must be a numeric" = is.numeric(X),
-    "X must be a non empty" = length(X) > 0
+    "X must be a numeric" = is.numeric(x),
+    "X must be a non empty" = length(x) > 0
   )
 
   # Kernel condition
-  stopifnot("K is not a function" = is.function(K))
+  stopifnot("K is not a function" = is.function(kernel))
 
   # Bandwidth condition
   stopifnot(
@@ -40,15 +40,15 @@ goldenshluger_lepski <- function(X, K = dnorm, n = 40, kappa = 1.2, N = 100L) {
   )
 
   n <- as.integer(n)
-  a <- min(X)
-  b <- max(X)
+  a <- min(x)
+  b <- max(x)
   ab <- seq(a, b, length.out = N)
 
-  m <- length(X)
+  m <- length(x)
   estimf <- matrix(0, n, N)
 
-  K_Norm1_sqr <- (sum(abs(K(ab))) * (b - a) / N)^2
-  K_Norm2_sqr <- (sum(K(ab)^2)) * (b - a) / N
+  K_Norm1_sqr <- (sum(abs(kernel(ab))) * (b - a) / N)^2
+  K_Norm2_sqr <- (sum(kernel(ab)^2)) * (b - a) / N
   Norm2 <- matrix(0, n, n)
   V <- rep(0, n)
   A <- rep(0, n)
@@ -60,11 +60,11 @@ goldenshluger_lepski <- function(X, K = dnorm, n = 40, kappa = 1.2, N = 100L) {
 
   for (i in 1:n) {
     h <- k / n
-    f_h <- kernel_estimator(X, K, h)
+    f_h <- kernel_estimator(x, kernel, h)
     for (j in 1:n) {
       h2 <- j / n
-      f_h2 <- kernel_estimator(X, K, h2)
-      K_h2 <- function(x) K(x / h2) / h2
+      f_h2 <- kernel_estimator(x, kernel, h2)
+      K_h2 <- function(x) kernel(x / h2) / h2
       f_h_h2 <- function(x) {
         res <- rep(0, length(x))
         for (k in 1:length(x)) {

@@ -3,8 +3,8 @@
 #' @description \code{pco_method} estimates an optimal bandwidth
 #'   for kernel density estimator using the PCO method
 #'
-#' @param X numeric vector of the observation sample
-#' @param K kernel function used for kernel density estimation
+#' @param x numeric vector of the observation sample
+#' @param kernel kernel function used for kernel density estimation
 #' @param n number of bandwidths to be optimized from. \code{pco_method} selects
 #'   a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param lambda positive scalar used as tuning parameter
@@ -43,15 +43,15 @@
 #'
 #' @examples
 #'
-#' X <- rnorm(1000)
-#' h <- pco_method(X, dnorm)
-#' f <- kernel_estimator(X, kernel = dnorm, bandwidth = h)
+#' x <- stats::rnorm(1000)
+#' h <- pco_method(x, kernel = stats::dnorm)
+#' f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 #'
 #' a <- min(X)
 #' b <- max(X)
 #' ab <- seq(a, b, length.out = 100)
 #'
-#' plot(ab, dnorm(ab), type = "l")
+#' plot(ab, stats::dnorm(ab), type = "l")
 #' line(ab, f(ab), col = "red")
 #' legend("topleft",
 #'   legend = c("true", "estimated h"), col = c("black", "red"),
@@ -61,15 +61,15 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-pco_method <- function(X, K, n = 40, lambda = 1, N = 100L) {
+pco_method <- function(x, kernel, n = 40, lambda = 1, N = 100L) {
   # Sample condition
   stopifnot(
-    "X must be a numeric" = is.numeric(X),
-    "X must be a non empty" = length(X) > 0
+    "X must be a numeric" = is.numeric(x),
+    "X must be a non empty" = length(x) > 0
   )
 
   # Kernel condition
-  stopifnot("K is not a function" = is.function(K))
+  stopifnot("K is not a function" = is.function(kernel))
 
   # Bandwidth condition
   stopifnot(
@@ -92,23 +92,23 @@ pco_method <- function(X, K, n = 40, lambda = 1, N = 100L) {
 
   n <- as.integer(n)
   N <- as.integer(N)
-  m <- length(X)
-  a <- min(X)
-  b <- max(X)
+  m <- length(x)
+  a <- min(x)
+  b <- max(x)
   ab <- seq(a, b, N)
 
   risk <- c()
   h_min <- 1 / n
-  f_h_min <- kernel_estimator(X, K, h_min)
-  K_h_min <- function(x) K(x / h) / h
+  f_h_min <- kernel_estimator(x, kernel, h_min)
+  K_h_min <- function(x) kernel(x / h) / h
 
   for (k in 1:n) {
     h <- k / n
-    f_h <- kernel_estimator(X, K, h)
+    f_h <- kernel_estimator(x, kernel, h)
 
     bias_estim <- sum((f_h_min(ab) - f_h(ab))^2) * (b - a) / N
 
-    K_h <- function(x) K(x / h) / h
+    K_h <- function(x) kernel(x / h) / h
     K_h_Norm <- sum(K_h(ab)^2) * (b - a) / N
 
     var_h <- lambda * K_h_Norm / m

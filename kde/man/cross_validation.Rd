@@ -7,17 +7,17 @@
 Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 }
 \usage{
-cross_validation(X, K, n = 40L, N = 100)
+cross_validation(x, kernel, n = 40L, N = 100)
 }
 \arguments{
-\item{X}{numeric vector of the observation sample}
-
-\item{K}{kernel function used for the kernel density estimation}
+\item{x}{numeric vector of the observation sample}
 
 \item{n}{number of bandwidths to be optimized from. \code{cross_validation}
 selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
 
 \item{N}{number of subdivisions used in discretization of integrals}
+
+\item{K}{kernel function used for the kernel density estimation}
 }
 \value{
 The estimatet optimal bandwidth
@@ -35,15 +35,15 @@ risk and selects the bandwidth with the minimal risk
 }
 \examples{
 
-X <- rnorm(1000)
-h <- cross_validation(X, dnorm)
-f <- kernel_estimator(X, kernel = dnorm, bandwidth = h)
+x <- stats::rnorm(1000)
+h <- cross_validation(x, kernel = stats::dnorm)
+f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 
-a <- min(X)
-b <- max(X)
+a <- min(x)
+b <- max(x)
 ab <- seq(a, b, length.out = 100)
 
-plot(ab, dnorm(ab), type = "l")
+plot(ab, stats::dnorm(ab), type = "l")
 line(ab, f(ab), col = "red")
 legend("topleft",
   legend = c("true", "estimated h"), col = c("black", "red"),
