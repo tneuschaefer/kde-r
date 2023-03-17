@@ -1,10 +1,11 @@
 #' Penalized Comparison to Overfitting
 #'
 #' @description \code{pco_method} estimates an optimal bandwidth
-#'   for kernel density estimator using the PCO method
+#'   for kernel density estimation using the PCO method
 #'
 #' @param x numeric vector of the observation sample
-#' @param kernel kernel function used for kernel density estimation
+#' @param kernel kernel function used for kernel density estimation, default
+#'   is Gaussian kernel
 #' @param n number of bandwidths to be optimized from. \code{pco_method} selects
 #'   a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param lambda positive scalar used as tuning parameter
@@ -37,10 +38,11 @@
 #'   density estimation
 #'
 #'   \code{\link{cross_validation}} and \code{\link{goldenshluger_lepski}} for
-#'   other automatic bandwidth-selection algorithms
+#'     other automatic bandwidth-selection algorithms
 #'
 #' @source Lacour et al, Estimator selection: a new method with applications to
 #'   kernel density estimation (2017), https://arxiv.org/abs/1607.05091
+#'
 #'
 #' @examples
 #'
@@ -67,25 +69,33 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
 
-  # ensuring requirements
+  # Sample condition
   stopifnot(
-    "x must be numeric" = is.numeric(x),
-    "x must not be empty" = length(x) > 0,
-    "x contains missing values" = !anyNA(x),
-    "kernel must be a function" = is.function(kernel),
-    "n must be numeric" = is.numeric(n),
-    "n must not be empty" = length(n) > 0,
-    "lambda must be numeric" = is.numeric(lambda),
-    "lambda must be greater than 0" = lambda > 0,
-    "lambda must not be empty" = length(lambda) > 0,
-    "N must be numeric" = is.numeric(N),
-    "N must not be empty" = length(N) > 0
+    "X must be a numeric" = is.numeric(x),
+    "X must be a non empty" = length(x) > 0
   )
 
-  # reformat arguments where possible without throwing an error
-  n <- as.integer(abs(n[1]))
-  lambda <- lambda[1]
-  N <- as.integer(abs(N[1]))
+  # Kernel condition
+  stopifnot("K is not a function" = is.function(kernel))
+
+  # Bandwidth condition
+  stopifnot(
+    "n must be numeric" = is.numeric(n),
+    "n must have length one" = length(n) == 1
+  )
+
+  # Lamdda condition
+  stopifnot(
+    "Lambda must be numeric" = is.numeric(lambda),
+    "Lambda must have length one" = length(lambda) == 1,
+    "Lambda must be > 0" = lambda > 0
+  )
+
+  # Subdivisions condition
+  stopifnot(
+    "N must be numeric" = is.numeric(N),
+    "N must have length one" = length(N) == 1
+  )
 
   # if built_in was provided use that as the kernel
   if (!missing(built_in)) {
@@ -93,14 +103,16 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov(),
-      rectangular = rectangular(),
-      triangular = triangular(),
-      biweight = biweight(),
-      silverman = silverman()
+      epanechnikov = epanechnikov,
+      rectangular = rectangular,
+      triangular = triangular,
+      biweight = biweight,
+      silverman = silverman
     )
   }
 
+  n <- as.integer(n)
+  N <- as.integer(N)
   m <- length(x)
   a <- min(x)
   b <- max(x)
@@ -131,6 +143,6 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     risk <- c(risk, l_pco)
   }
   risk <- risk[-1]
-  k <- which.min(risk)
+  k <- which.min(risk) + 1
   k / n
 }

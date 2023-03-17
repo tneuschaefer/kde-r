@@ -30,7 +30,7 @@ default is 1}
 }
 \value{
 A function which estimates the probability density function of the
-sample \code{X}
+sample \code{x}
 }
 \description{
 \code{kernel_estimator} creates a kernel density estimator using
@@ -43,8 +43,8 @@ The function given by \code{kernel_estimator} is vectorized
 x <- stats::rnorm(100)
 
 f1 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 1)
-f2 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 0.5)
-f3 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 0.1)
+f2 <- kernel_estimator(x, built_in = "epanechnikov", bandwidth = 0.5)
+f3 <- kernel_estimator(x, built_in = "rectangular", bandwidth = 0.1)
 
 a <- min(x)
 b <- max(x)
@@ -62,6 +62,6 @@ legend("topleft",
 
 }
 \seealso{
-\code{\link{cross_validation}} and \code{\link{pco_method}} for
-automatic bandwidth selection methods
+\code{\link{cross_validation}}, \code{\link{goldenshluger_lepski}}
+and \code{\link{pco_method}} for automatic bandwidth selection methods
 }

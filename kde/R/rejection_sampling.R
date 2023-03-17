@@ -19,7 +19,7 @@
 #'   m*density(x)} for all \code{x}.
 #'
 #'   If no m is given \code{rejection_sampling_factory}
-#'   searches for a maximum of \code{sample_density/density} inside \code{interval}
+#'   searches for a maximum of \code{sample_density/proposal_density} inside \code{interval}
 #'
 #' @return A function taking a single numeric number \code{n} returning \code{n}
 #'   \code{sample_density}-distributed random numbers
@@ -109,7 +109,7 @@ rejection_sampling_factory <- function(sample_density, proposal_dist, proposal_d
   }
 }
 
-#' Rejection Sampling Factory
+#' Rejection Sampling
 #'
 #' @description \code{rejection_sampling} draws samples from a given probabilty density function
 #'

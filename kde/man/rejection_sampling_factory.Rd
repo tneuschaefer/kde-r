@@ -45,7 +45,7 @@ chosen as small as possible, satisfying \code{sample_density(x) <=
   m*density(x)} for all \code{x}.
 
 If no m is given \code{rejection_sampling_factory}
-searches for a maximum of \code{sample_density/density} inside \code{interval}
+searches for a maximum of \code{sample_density/proposal_density} inside \code{interval}
 }
 \examples{
 custom_den <- function(x) {

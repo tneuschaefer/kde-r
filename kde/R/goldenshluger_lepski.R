@@ -1,30 +1,42 @@
-#' Goldenshluger Lepski Method
+#' Goldenshluger and Lepski method
 #'
-#' @description \code{goldenshluger_lepski} estimates an optimal bandwidth
-#'   for kernel density estimation using the Goldenshluger Lepski Method
+#' @description  \code{goldenshluger_lepski} estiamtes the optimal bandwidth
+#'   for kernel density estimation using the global Goldenshluger and Lepski
+#'   method
 #'
-#' @param x numeric vector of the observation sample
-#' @param kernel kernel function used for kernel density estimation
-#' @param n number of bandwidths to be optimized from. \code{goldenshluger_lepski}
-#'    selects a bandwidth contained in  (1/n, 2/n, ..., 1)
+#' @param x x numeric vector of the observation sample
+#' @param kernel kernel function used for kernel density estimation, default
+#'   is Gaussian kernel
+#' @param n number of bandwidths to be optimized from. \code{pco_method} selects
+#'   a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param lambda positive scalar used as tuning parameter
 #' @param N number of subdivisions used in discretization of integrals
 #' @param built_in choose one of the built-in kernels instead of providing one yourself
 #' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
-#' @return The estimatet optimal bandwidth
+#' @details The Goldenshluger and Lepski method tries to minimize an upper bound
+#'   for the mean integrated squared error (MISE) of a kernel density estimator
+#'
+#'   The bias/variance decomposition is used. Because the bias term depends on
+#'   the unknown density, a double kernel approach is used to to estimate the
+#'   bias.
+#'
+#'   An upper bound for the variance is estimated, this estemator depends on a
+#'   tuning paramter \code{lambda}. Recommended is \code{lambda}=1.2
+#'
+#' @return The estimated optimal bandwidth
 #'
 #' @seealso \code{\link{kernel_estimator}} for more information about kernel
 #'   density estimation
 #'
-#'   \code{\link{cross_validation}} and \code{\link{pco_method}} for other
-#'   automatic bandwidth-selection algorithms
+#'   \code{\link{cross_validation}} and \code{\link{pco_method}} for other automatic bandwidth-selection
+#'   algorithms
 #'
 #' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
 #' @examples
 #'
-#' x <- stats::rnorm(100)
+#' x <- stats::rnorm(10)
 #' h <- goldenshluger_lepski(x, kernel = stats::dnorm)
 #' f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 #'
@@ -40,6 +52,7 @@
 #' )
 #'
 #' @include kernel_estimator.R
+#'
 #' @export
 goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, lambda = 1.2, N = 100L,
 built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
@@ -55,7 +68,7 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     "n must be numeric" = is.numeric(n),
     "n must not be empty" = length(n) > 0,
     "lambda must be numeric" = is.numeric(lambda),
-    "lambda must be greater than 1" = lambda > 1,
+    "lambda must be greater than 1" = lambda >= 1,
     "lambda must not be empty" = length(lambda) > 0,
     "N must be numeric" = is.numeric(N),
     "N must not be empty" = length(N) > 0
@@ -72,11 +85,11 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov(),
-      rectangular = rectangular(),
-      triangular = triangular(),
-      biweight = biweight(),
-      silverman = silverman()
+      epanechnikov = epanechnikov,
+      rectangular = rectangular,
+      triangular = triangular,
+      biweight = biweight,
+      silverman = silverman
     )
   }
 
@@ -115,6 +128,6 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     }
     A[i] <- max(Norm2[i, ] - lambda * V)
   }
-
+  A[A < 0] <- 0
   which.min(A + 2 * lambda * V) / N
 }

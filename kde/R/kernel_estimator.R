@@ -11,12 +11,12 @@
 #' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
 #' @return A function which estimates the probability density function of the
-#'   sample \code{X}
+#'   sample \code{x}
 #'
 #' @details The function given by \code{kernel_estimator} is vectorized
 #'
-#' @seealso \code{\link{cross_validation}} and \code{\link{pco_method}} for
-#' automatic bandwidth selection methods
+#' @seealso \code{\link{cross_validation}}, \code{\link{goldenshluger_lepski}}
+#'   and \code{\link{pco_method}} for automatic bandwidth selection methods
 #'
 #' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
@@ -24,8 +24,8 @@
 #' x <- stats::rnorm(100)
 #'
 #' f1 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 1)
-#' f2 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 0.5)
-#' f3 <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = 0.1)
+#' f2 <- kernel_estimator(x, built_in = "epanechnikov", bandwidth = 0.5)
+#' f3 <- kernel_estimator(x, built_in = "rectangular", bandwidth = 0.1)
 #'
 #' a <- min(x)
 #' b <- max(x)
@@ -69,11 +69,11 @@ kernel_estimator <- function(x, kernel = stats::dnorm,
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov(),
-      rectangular = rectangular(),
-      triangular = triangular(),
-      biweight = biweight(),
-      silverman = silverman()
+      epanechnikov = epanechnikov,
+      rectangular = rectangular,
+      triangular = triangular,
+      biweight = biweight,
+      silverman = silverman
     )
   }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/rejection_sampling.R
 \name{rejection_sampling}
 \alias{rejection_sampling}
-\title{Rejection Sampling Factory}
+\title{Rejection Sampling}
 \usage{
 rejection_sampling(
   n,
