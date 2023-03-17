@@ -93,11 +93,11 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov(),
-      rectangular = rectangular(),
-      triangular = triangular(),
-      biweight = biweight(),
-      silverman = silverman()
+      epanechnikov = epanechnikov,
+      rectangular = rectangular,
+      triangular = triangular,
+      biweight = biweight,
+      silverman = silverman
     )
   }
 

@@ -41,9 +41,20 @@ The estimatet optimal bandwidth
 \code{goldenshluger_lepski} estimates an optimal bandwidth
 for kernel density estimation using the Goldenshluger Lepski Method
 }
+\details{
+The Goldenshluger and Lepski method tries to minimize an upper bound
+for the mean integrated squared error (MISE) of a kernel density estimator
+
+The bias/variance decomposition is used. Because the bias term depends on
+the unknown density, a double kernel approach is used to to estimate the
+bias.
+
+An upper bound for the variance is estimated, this estemator depends on a
+tuning paramter \code{lambda}. Recommended is \code{lambda}=1.2
+}
 \examples{
 
-x <- stats::rnorm(100)
+x <- stats::rnorm(10)
 h <- goldenshluger_lepski(x, kernel = stats::dnorm)
 f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 

@@ -12,6 +12,16 @@
 #' @param built_in choose one of the built-in kernels instead of providing one yourself
 #' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
+#' @details The Goldenshluger and Lepski method tries to minimize an upper bound
+#'   for the mean integrated squared error (MISE) of a kernel density estimator
+#'
+#'   The bias/variance decomposition is used. Because the bias term depends on
+#'   the unknown density, a double kernel approach is used to to estimate the
+#'   bias.
+#'
+#'   An upper bound for the variance is estimated, this estemator depends on a
+#'   tuning paramter \code{lambda}. Recommended is \code{lambda}=1.2
+#'
 #' @return The estimatet optimal bandwidth
 #'
 #' @seealso \code{\link{kernel_estimator}} for more information about kernel
@@ -24,7 +34,7 @@
 #'
 #' @examples
 #'
-#' x <- stats::rnorm(100)
+#' x <- stats::rnorm(10)
 #' h <- goldenshluger_lepski(x, kernel = stats::dnorm)
 #' f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 #'
@@ -72,11 +82,11 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov(),
-      rectangular = rectangular(),
-      triangular = triangular(),
-      biweight = biweight(),
-      silverman = silverman()
+      epanechnikov = epanechnikov,
+      rectangular = rectangular,
+      triangular = triangular,
+      biweight = biweight,
+      silverman = silverman
     )
   }
 

@@ -47,7 +47,7 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-cross_validation <- function(x, kernel = stats::dnorm, n = 40L, N = 100L, 
+cross_validation <- function(x, kernel = stats::dnorm, n = 40L, N = 100L,
 built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
@@ -74,11 +74,11 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov(),
-      rectangular = rectangular(),
-      triangular = triangular(),
-      biweight = biweight(),
-      silverman = silverman()
+      epanechnikov = epanechnikov,
+      rectangular = rectangular,
+      triangular = triangular,
+      biweight = biweight,
+      silverman = silverman
     )
   }
 

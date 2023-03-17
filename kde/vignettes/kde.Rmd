@@ -79,7 +79,7 @@ legend("topleft",
 
 Note that different kernels have a different optimal bandwidth, therefor it is important to select the optimal bandwidth for the specific kernel used. This brings us to bandwidth-selection algorithms. There are different approaches to estimate optimal bandwidths, this package includes three different methods one can use to use to select bandwidths:
 
-- cross_validate()
+- cross_validation()
 
 - goldenshluger_lepski()
 
@@ -106,7 +106,7 @@ legend("topleft",
 ### Sample Generation
 
 Now that we have the density of our sample we can simulate new samples using rejection_sampling().
-This method takes the amount n of samples you wanto to simulate, a density you want to take samples from (sample_density), a distribution and its density and a numeric positive scalar M satisfying sample_density(x) <= M * density(x) for all x as an input and returns a sample with n entries.
+This method takes the amount n of samples you want to simulate, a density you want to take samples from (sample_density), a distribution and its density and a numeric positive scalar M satisfying sample_density(x) <= M * density(x) for all x as an input and returns a sample with n entries.
 Alternatively you can use rejection_sampling_factory() to get the distribution function that is used to draw these samples. The function itself produces n samples from the given distribution and samples from a uniform-distribution u and accept/rejects y iff u * M * sample_density(y) <= density(y). Samples are accepted/rejected with probability of 1/M, therefor it takes M samples to accept one and a small selection of M is preferable.
 If no suitable M is known the user can give the function an interval that contains a maximum of sample_density/density, the function will try to compute the maximum and uses this as M. Note that this M does not have to be optimal and in general distributions similar to the  the sample_density-distribution produce better samples.
 We can generate samples of our estimator as an example:
