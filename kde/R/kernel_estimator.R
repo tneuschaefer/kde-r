@@ -6,7 +6,7 @@
 #' @param x numeric vector of the observation sample
 #' @param kernel kernel function, default is Gaussian kernel
 #' @param built_in choose a built-in kernel instead of providing one yourself
-#' @param bandwith non-negative numeric scalar, the bandwidth of the estimator
+#' @param bandwidth non-negative numeric scalar, the bandwidth of the estimator
 #'  default is 1
 #' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
@@ -44,7 +44,7 @@
 #' @export
 kernel_estimator <- function(x, kernel = stats::dnorm,
                              built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"),
-                             bandwith = 1, na.rm = FALSE) {
+                             bandwidth = 1, na.rm = FALSE) {
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
 
@@ -53,13 +53,13 @@ kernel_estimator <- function(x, kernel = stats::dnorm,
     "x must be a numeric" = is.numeric(x),
     "x must not be empty" = length(x) > 0,
     "kernel must be a function" = is.function(kernel),
-    "bandwidth must be numeric" = is.numeric(bandwith),
-    "bandwidth must be greater than 0" = bandwith > 0,
+    "bandwidth must be numeric" = is.numeric(bandwidth),
+    "bandwidth must be greater than 0" = bandwidth > 0,
     "x contains missing values" = !anyNA(x)
   )
 
   # in case the provided bandwidth is of length greater than 1
-  bandwith <- bandwith[1]
+  bandwidth <- bandwidth[1]
 
   # if built_in was provided use that as the kernel
   if (!missing(built_in)) {
@@ -75,7 +75,6 @@ kernel_estimator <- function(x, kernel = stats::dnorm,
     )
   }
 
-  # TODO redo all of this shit
   # returning estimator function
   function(t) {
     stopifnot(
@@ -84,16 +83,11 @@ kernel_estimator <- function(x, kernel = stats::dnorm,
     )
 
     n <- length(x)
-    m <- length(t)
-    Mat <- matrix(0, nrow = n, ncol = m)
 
-    for (i in 1:n) {
-      for (j in 1:m) {
-        U <- (x[i] - t[j]) / bandwith
-        Mat[i, j] <- kernel(U) / bandwith
-      }
-    }
-    apply(Mat, 2, mean)
+    # calculate the value of the estimated probability density for each input value in t
+    sapply(t, function(t_i) {
+      1 / (n * bandwidth) * sum(kernel((x - t_i) / bandwidth))
+    })
   }
 }
 
