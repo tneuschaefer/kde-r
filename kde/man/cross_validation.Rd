@@ -7,7 +7,15 @@
 Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 }
 \usage{
-cross_validation(x, kernel, n = 40L, N = 100)
+cross_validation(
+  x,
+  kernel,
+  n = 40L,
+  N = 100L,
+  built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
+    "silverman"),
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{x}{numeric vector of the observation sample}
@@ -16,6 +24,10 @@ cross_validation(x, kernel, n = 40L, N = 100)
 selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
 
 \item{N}{number of subdivisions used in discretization of integrals}
+
+\item{built_in}{choose one of the built-in kernels instead of providing one yourself}
+
+\item{na.rm}{logical; if TRUE, missing values will be removed from x}
 
 \item{K}{kernel function used for the kernel density estimation}
 }

@@ -4,10 +4,21 @@
 \alias{goldenshluger_lepski}
 \title{Title}
 \usage{
-goldenshluger_lepski(x, kernel = stats::dnorm, n = 40, kappa = 1.2, N = 100L)
+goldenshluger_lepski(
+  x,
+  kernel = stats::dnorm,
+  n = 40,
+  lambda = 1.2,
+  N = 100L,
+  built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
+    "silverman"),
+  na.rm = FALSE
+)
 }
 \arguments{
-\item{N}{}
+\item{built_in}{choose one of the built-in kernels instead of providing one yourself}
+
+\item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
 \description{
 Title

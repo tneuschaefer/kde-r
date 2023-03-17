@@ -1,3 +1,13 @@
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("argument requirements work", {
+  expect_error(pco_method(x = TRUE))
+  expect_error(pco_method(x = numeric()))
+  expect_error(pco_method(x = NA, na.rm = FALSE))
+  expect_error(pco_method(x = 3, kernel = 4))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, n = TRUE))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, n = numeric()))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, lambda = TRUE))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, lambda = 0))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, lambda = numeric()))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, N = TRUE))
+  expect_error(pco_method(x = 3, kernel = stats::dnorm, N = numeric()))
 })

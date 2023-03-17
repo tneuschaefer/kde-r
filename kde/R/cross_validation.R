@@ -8,6 +8,8 @@
 #' @param n number of bandwidths to be optimized from. \code{cross_validation}
 #'   selects a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param N number of subdivisions used in discretization of integrals
+#' @param built_in choose one of the built-in kernels instead of providing one yourself
+#' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
 #' @details The cross-validation method tries to minimize the mean squared
 #'   integrated error (MISE) of a kernel density estimator
@@ -45,29 +47,44 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-cross_validation <- function(x, kernel, n = 40L, N = 100) {
-  # Sample condition
-  stopifnot(
-    "X must be a numeric" = is.numeric(x),
-    "X must be a non empty" = length(x) > 0
-  )
+cross_validation <- function(x, kernel, n = 40L, N = 100L, 
+built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
+  # remove NA values if na.rm is set to TRUE
+  if (na.rm) x <- x[!is.na(x)]
 
-  # Kernel condition
-  stopifnot("K is not a function" = is.function(kernel))
-
-  # Bandwidth condition
+  # ensuring requirements
   stopifnot(
+    "x must be numeric" = is.numeric(x),
+    "x must not be empty" = length(x) > 0,
+    "x contains missing values" = !anyNA(x),
+    "kernel must be a function" = is.function(kernel),
     "n must be numeric" = is.numeric(n),
-    "n must have length one" = length(n) == 1
+    "n must not be empty" = length(n) > 0,
+    "lambda must be numeric" = is.numeric(lambda),
+    "lambda must be greater than 1" = lambda >= 1,
+    "lambda must not be empty" = length(lambda) > 0,
+    "N must be numeric" = is.numeric(N),
+    "N must not be empty" = length(N) > 0
   )
 
-  # Subdivision condition
-  stopifnot(
-    "N must be an integer" = is.integer(n),
-    "N must have length one" = length(n) == 1
-  )
+  # if built_in was provided use that as the kernel
+  if (!missing(built_in)) {
+    # match the argument for built_in
+    built_in <- match.arg(built_in)
+    kernel <- switch(built_in,
+      gaussian = stats::dnorm,
+      epanechnikov = epanechnikov(),
+      rectangular = rectangular(),
+      triangular = triangular(),
+      biweight = biweight(),
+      silverman = silverman()
+    )
+  }
 
-  n <- as.integer(n)
+  # reformat arguments where possible without throwing an error
+  n <- as.integer(abs(n[1]))
+  N <- as.integer(abs(N[1]))
+
   a <- min(x)
   b <- max(x)
   ab <- seq(a, b, N)

@@ -9,6 +9,8 @@
 #'   a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param lambda positive scalar used as tuning parameter
 #' @param N number of subdivisions used in discretization of integrals
+#' @param built_in choose one of the built-in kernels instead of providing one yourself
+#' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
 #' @details The PCO method tries to minimize an upper bound for the mean
 #'   integrated squared error (MISE) of a kernel density estimator
@@ -61,7 +63,11 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-pco_method <- function(x, kernel, n = 40, lambda = 1, N = 100L) {
+pco_method <- function(x, kernel, n = 40, lambda = 1, N = 100L,
+built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
+  # remove NA values if na.rm is set to TRUE
+  if (na.rm) x <- x[!is.na(x)]
+
   # Sample condition
   stopifnot(
     "X must be a numeric" = is.numeric(x),
@@ -89,6 +95,20 @@ pco_method <- function(x, kernel, n = 40, lambda = 1, N = 100L) {
     "N must be numeric" = is.numeric(N),
     "N must have length one" = length(N) == 1
   )
+
+  # if built_in was provided use that as the kernel
+  if (!missing(built_in)) {
+    # match the argument for built_in
+    built_in <- match.arg(built_in)
+    kernel <- switch(built_in,
+      gaussian = stats::dnorm,
+      epanechnikov = epanechnikov(),
+      rectangular = rectangular(),
+      triangular = triangular(),
+      biweight = biweight(),
+      silverman = silverman()
+    )
+  }
 
   n <- as.integer(n)
   N <- as.integer(N)

@@ -51,13 +51,14 @@ kernel_estimator <- function(x, kernel = stats::dnorm,
 
   # ensuring requirements
   stopifnot(
-    "x must be a numeric" = is.numeric(x),
+    "x must be numeric" = is.numeric(x),
     "x must not be empty" = length(x) > 0,
+    "x contains missing values" = !anyNA(x),
     "kernel must be a function" = is.function(kernel),
     "bandwidth must be numeric" = is.numeric(bandwidth),
     "bandwidth must be greater than 0" = bandwidth > 0,
-    "x contains missing values" = !anyNA(x)
-  )
+    "bandwidth must not be empty" = length(bandwidth) > 0
+    )
 
   # in case the provided bandwidth is of length greater than 1
   bandwidth <- bandwidth[1]

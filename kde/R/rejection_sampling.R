@@ -53,14 +53,15 @@ rejection_sampling_factory <- function(sample_density, proposal_dist, proposal_d
   # densities and distribution must be functions
   stopifnot(
     "sample_density must be a function" = is.function(sample_density),
-    "proposal_density must be a function" = is.function(proposal_density),
-    "proposal_dist must be a function" = is.function(proposal_dist)
+    "proposal_dist must be a function" = is.function(proposal_dist),
+    "proposal_density must be a function" = is.function(proposal_density)
   )
 
   if (!missing(m)) {
     # check requirements for m
     stopifnot(
       "m must be numeric" = is.numeric(m),
+      "m must not be empty" = length(m) > 0,
       "m must be >= 1" = m >= 1
     )
     # in case the provided m is of length greater than 1
@@ -83,7 +84,10 @@ rejection_sampling_factory <- function(sample_density, proposal_dist, proposal_d
   # returning this function
   function(n) {
     # checking requirements for n
-    stopifnot("n must be numeric" = is.numeric(n))
+    stopifnot(
+      "n must be numeric" = is.numeric(n),
+      "n must be greater than 0" = n > 0
+    )
     n <- as.integer(n[1])
 
     accepted <- c()

@@ -8,7 +8,16 @@ Lacour et al, Estimator selection: a new method with applications to
 kernel density estimation (2017), https://arxiv.org/abs/1607.05091
 }
 \usage{
-pco_method(x, kernel, n = 40, lambda = 1, N = 100L)
+pco_method(
+  x,
+  kernel,
+  n = 40,
+  lambda = 1,
+  N = 100L,
+  built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
+    "silverman"),
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{x}{numeric vector of the observation sample}
@@ -21,6 +30,10 @@ a bandwidth contained in  (1/n, 2/n, ..., 1)}
 \item{lambda}{positive scalar used as tuning parameter}
 
 \item{N}{number of subdivisions used in discretization of integrals}
+
+\item{built_in}{choose one of the built-in kernels instead of providing one yourself}
+
+\item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
 \value{
 The estimated optimal bandwidth

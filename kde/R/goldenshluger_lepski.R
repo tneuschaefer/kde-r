@@ -1,51 +1,63 @@
 #' Title
 #'
-#' @param X
-#' @param K
+#' @param x
+#' @param kernel
 #' @param n
-#' @param kappa
+#' @param lambda
 #' @param N
+#' @param built_in choose one of the built-in kernels instead of providing one yourself
+#' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
 #' @return
-#' @export
 #'
 #' @examples
-goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, kappa = 1.2, N = 100L) {
-  # Sample condition
-  stopifnot(
-    "X must be a numeric" = is.numeric(x),
-    "X must be a non empty" = length(x) > 0
-  )
+#'  
+#' @include kernel_estimator.R
+#' @export
+goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, lambda = 1.2, N = 100L,
+built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
+  # remove NA values if na.rm is set to TRUE
+  if (na.rm) x <- x[!is.na(x)]
 
-  # Kernel condition
-  stopifnot("K is not a function" = is.function(kernel))
-
-  # Bandwidth condition
+  # ensuring requirements
   stopifnot(
+    "x must be numeric" = is.numeric(x),
+    "x must not be empty" = length(x) > 0,
+    "x contains missing values" = !anyNA(x),
+    "kernel must be a function" = is.function(kernel),
     "n must be numeric" = is.numeric(n),
-    "n must have length one" = length(n) == 1
+    "n must not be empty" = length(n) > 0,
+    "lambda must be numeric" = is.numeric(lambda),
+    "lambda must be greater than 1" = lambda >= 1,
+    "lambda must not be empty" = length(lambda) > 0,
+    "N must be numeric" = is.numeric(N),
+    "N must not be empty" = length(N) > 0
   )
 
-  # Kappa condition
-  stopifnot(
-    "Kappa must be numeric" = is.numeric(kappa),
-    "Kappa must have length one" = length(kappa) == 1,
-    "Kappa must be >= 1" = kappa >= 1
-  )
+  # reformat arguments where possible without throwing an error
+  n <- as.integer(abs(n[1]))
+  lambda <- lambda[1]
+  N <- as.integer(abs(N[1]))
 
-  # Subdivisions condition
-  stopifnot(
-    "N must be an integer" = is.integer(N),
-    "N must have length one" = length(N) == 1
-  )
+  # if built_in was provided use that as the kernel
+  if (!missing(built_in)) {
+    # match the argument for built_in
+    built_in <- match.arg(built_in)
+    kernel <- switch(built_in,
+      gaussian = stats::dnorm,
+      epanechnikov = epanechnikov(),
+      rectangular = rectangular(),
+      triangular = triangular(),
+      biweight = biweight(),
+      silverman = silverman()
+    )
+  }
 
-  n <- as.integer(n)
   a <- min(x)
   b <- max(x)
   ab <- seq(a, b, length.out = N)
 
   m <- length(x)
-  estimf <- matrix(0, n, N)
 
   K_Norm1_sqr <- (sum(abs(kernel(ab))) * (b - a) / N)^2
   K_Norm2_sqr <- (sum(kernel(ab)^2)) * (b - a) / N
@@ -60,10 +72,10 @@ goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, kappa = 1.2, 
 
   for (i in 1:n) {
     h <- k / n
-    f_h <- kernel_estimator(x, kernel, h)
+    f_h <- kernel_estimator(x, kernel = kernel, bandwidth = h)
     for (j in 1:n) {
       h2 <- j / n
-      f_h2 <- kernel_estimator(x, kernel, h2)
+      f_h2 <- kernel_estimator(x, kernel = kernel, bandwidth = h2)
       K_h2 <- function(x) kernel(x / h2) / h2
       f_h_h2 <- function(x) {
         res <- rep(0, length(x))
@@ -74,8 +86,8 @@ goldenshluger_lepski <- function(x, kernel = stats::dnorm, n = 40, kappa = 1.2, 
       }
       Norm2[i, j] <- sum((f_h_h2(ab) - f_h2(ab))^2) * (b - a) / N
     }
-    A[i] <- max(Norm2[i, ] - kappa * V)
+    A[i] <- max(Norm2[i, ] - lambda * V)
   }
 
-  which.min(A + 2 * kappa * V) / N
+  which.min(A + 2 * lambda * V) / N
 }

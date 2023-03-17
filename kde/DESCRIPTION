@@ -1,6 +1,6 @@
 Package: kde
 Title: Kernel Density Estimation
-Version: 0.1
+Version: 1.0
 Authors@R: c(
     person("Thomas", "Frais", role = c("aut")),
     person("Maren", "Heinemann", role = c("aut")),

@@ -1,3 +1,10 @@
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("argument requirements work", {
+  expect_error(cross_validation(x = TRUE))
+  expect_error(cross_validation(x = numeric()))
+  expect_error(cross_validation(x = NA, na.rm = FALSE))
+  expect_error(cross_validation(x = 3, kernel = 4))
+  expect_error(cross_validation(x = 3, kernel = stats::dnorm, n = TRUE))
+  expect_error(cross_validation(x = 3, kernel = stats::dnorm, n = numeric()))
+  expect_error(cross_validation(x = 3, kernel = stats::dnorm, N = TRUE))
+  expect_error(cross_validation(x = 3, kernel = stats::dnorm, N = numeric()))
 })
