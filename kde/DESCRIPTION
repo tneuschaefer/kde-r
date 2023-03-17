@@ -5,7 +5,9 @@ Authors@R: c(
     person("Thomas", "Frais", role = c("aut")),
     person("Maren", "Heinemann", role = c("aut")),
     person("Tobias", "Neuschäfer", email = "t.neuschaefer@stud.uni-heidelberg.de", role = c("aut", "cre")))
-Description: Various tools relating to Kernel Density Estimation.
+Description: This package contains a method for Kernel Density Estimation (KDE) as well as
+    three different methods to automatically select an approximatively optimal bandwidth for KDE.
+    You can also generate samples for a given probability density using Rejection Sampling.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
