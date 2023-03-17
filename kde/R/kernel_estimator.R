@@ -5,9 +5,9 @@
 #'
 #' @param x numeric vector of the observation sample
 #' @param kernel kernel function, default is Gaussian kernel
-#' @param built_in choose a built-in kernel instead of providing one yourself
 #' @param bandwidth non-negative numeric scalar, the bandwidth of the estimator
 #'  default is 1
+#' @param built_in choose one of the built-in kernels instead of providing one yourself
 #' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
 #' @return A function which estimates the probability density function of the
