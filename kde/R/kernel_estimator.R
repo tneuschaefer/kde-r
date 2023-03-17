@@ -27,8 +27,8 @@
 #' f2 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.5)
 #' f3 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.1)
 #'
-#' a <- min(X)
-#' b <- max(X)
+#' a <- min(x)
+#' b <- max(x)
 #' ab <- seq(a, b, length.out = 100)
 #'
 #' plot(ab, dnorm(ab), type = "l", xlab = "x", ylab = "density")
@@ -43,8 +43,9 @@
 #'
 #' @export
 kernel_estimator <- function(x, kernel = stats::dnorm,
+                             bandwidth = 1,
                              built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"),
-                             bandwidth = 1, na.rm = FALSE) {
+                             na.rm = FALSE) {
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
 

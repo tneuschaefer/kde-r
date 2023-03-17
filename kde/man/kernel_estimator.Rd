@@ -10,9 +10,9 @@ Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 kernel_estimator(
   x,
   kernel = stats::dnorm,
+  bandwidth = 1,
   built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight",
     "silverman"),
-  bandwidth = 1,
   na.rm = FALSE
 )
 }
@@ -21,10 +21,10 @@ kernel_estimator(
 
 \item{kernel}{kernel function, default is Gaussian kernel}
 
-\item{built_in}{choose a built-in kernel instead of providing one yourself}
-
 \item{bandwidth}{non-negative numeric scalar, the bandwidth of the estimator
 default is 1}
+
+\item{built_in}{choose a built-in kernel instead of providing one yourself}
 
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
@@ -46,8 +46,8 @@ f1 <- kernel_estimator(x, kernel = dnorm, bandwidth = 1)
 f2 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.5)
 f3 <- kernel_estimator(x, kernel = dnorm, bandwidth = 0.1)
 
-a <- min(X)
-b <- max(X)
+a <- min(x)
+b <- max(x)
 ab <- seq(a, b, length.out = 100)
 
 plot(ab, dnorm(ab), type = "l", xlab = "x", ylab = "density")
