@@ -7,6 +7,7 @@
 #' @param kernel kernel function, default is Gaussian kernel
 #' @param bandwith non-negative numeric scalar, the bandwidth of the estimator
 #'  default is 1
+#' @param na.rm logical; if TRUE, missing values will be removed from x
 #'
 #' @return A function which estimates the probability density function of the
 #'   sample \code{X}
@@ -40,14 +41,19 @@
 #' )
 #'
 #' @export
-kernel_estimator <- function(x, kernel = stats::dnorm, bandwith = 1) {
+kernel_estimator <- function(x, kernel = stats::dnorm, bandwith = 1, na.rm = FALSE) {
+
+  # remove NA values if na.rm is set to TRUE
+  if (na.rm) x <- stats::na.omit(x)
+
   # ensuring requirements
   stopifnot(
     "x must be a numeric" = is.numeric(x),
     "x must not be empty" = length(x) > 0,
     "kernel must be a function" = is.function(kernel),
     "bandwidth must be numeric" = is.numeric(bandwith),
-    "bandwidth must be greater than 0" = bandwith > 0
+    "bandwidth must be greater than 0" = bandwith > 0,
+    "x contains missing values" = anyNA(x)
   )
 
   # in case the provided bandwidth is of length greater than 1
