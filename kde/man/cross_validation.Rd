@@ -37,7 +37,7 @@ risk and selects the bandwidth with the minimal risk
 
 X <- rnorm(1000)
 h <- cross_validation(X, dnorm)
-f <- kernel_estimator(X, dnorm, h)
+f <- kernel_estimator(X, kernel = dnorm, bandwidth = h)
 
 a <- min(X)
 b <- max(X)

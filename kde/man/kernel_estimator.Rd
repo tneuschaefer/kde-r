@@ -24,7 +24,7 @@ kernel_estimator(
 \item{bandwidth}{non-negative numeric scalar, the bandwidth of the estimator
 default is 1}
 
-\item{built_in}{choose a built-in kernel instead of providing one yourself}
+\item{built_in}{choose one of the built-in kernels instead of providing one yourself}
 
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }

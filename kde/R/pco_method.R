@@ -45,7 +45,7 @@
 #'
 #' X <- rnorm(1000)
 #' h <- pco_method(X, dnorm)
-#' f <- kernel_estimator(X, dnorm, h)
+#' f <- kernel_estimator(X, kernel = dnorm, bandwidth = h)
 #'
 #' a <- min(X)
 #' b <- max(X)
