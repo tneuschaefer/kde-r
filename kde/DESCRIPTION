@@ -19,6 +19,5 @@ Collate:
     'kernel_estimator.R'
     'cross_validation.R'
     'goldenshluger_lepski.R'
-    'kde-package.R'
     'pco_method.R'
     'rejection_sampling.R'

@@ -51,18 +51,20 @@ two terms, therefor the name \code{penalized comparison to overfitting}
 }
 \examples{
 
-  X <- rnorm(1000)
-  h <- pco_method(X, dnorm)
-  f <- kernel_estimator(X, dnorm, h)
-  
-  a <- min(X)
-  b <- max(X)
-  ab <- seq(a, b, length.out = 100)
-  
-  plot(ab, dnorm(ab), type = "l")
-  line(ab, f(ab), col = "red")
-  legend("topleft", legend = c("true", "estimated h"), col = c("black", "red"),
-         pch = "|")
+X <- rnorm(1000)
+h <- pco_method(X, dnorm)
+f <- kernel_estimator(X, dnorm, h)
+
+a <- min(X)
+b <- max(X)
+ab <- seq(a, b, length.out = 100)
+
+plot(ab, dnorm(ab), type = "l")
+line(ab, f(ab), col = "red")
+legend("topleft",
+  legend = c("true", "estimated h"), col = c("black", "red"),
+  pch = "|"
+)
 
 }
 \seealso{

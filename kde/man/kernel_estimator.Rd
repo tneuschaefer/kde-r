@@ -7,14 +7,15 @@
 Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 }
 \usage{
-kernel_estimator(X, K, h = 1)
+kernel_estimator(x, kernel = stats::dnorm, bandwith = 1)
 }
 \arguments{
-\item{X}{numeric vector of the observation sample}
+\item{x}{numeric vector of the observation sample}
 
-\item{K}{kernel function}
+\item{kernel}{kernel function, default is Gaussian kernel}
 
-\item{h}{non-negative numeric scalar, the bandwidth of the estimator}
+\item{bandwith}{non-negative numeric scalar, the bandwidth of the estimator
+default is 1}
 }
 \value{
 A function which estimates the probability density function of the
@@ -28,23 +29,25 @@ the provided sample, kernel and bandwidth
 The function given by \code{kernel_estimator} is vectorized
 }
 \examples{
-  X <- rnorm(100)
-  
-  f1 <- kernel_estimator(X, dnorm, 1)
-  f2 <- kernel_estimator(X, dnorm, 0.5)
-  f3 <- kernel_estimator(X, dnorm, 0.1)
+X <- rnorm(100)
 
-  a <- min(X)
-  b <- max(X)
-  ab <- seq(a, b, length.out = 100)
+f1 <- kernel_estimator(X, dnorm, 1)
+f2 <- kernel_estimator(X, dnorm, 0.5)
+f3 <- kernel_estimator(X, dnorm, 0.1)
 
-  plot(ab, dnorm(ab), type = "l", xlab = "x", ylab = "density")
-  lines(ab, f1(ab), col = "red")
-  lines(ab, f2(ab), col = "blue")
-  lines(ab, f3(ab), col = "green")
+a <- min(X)
+b <- max(X)
+ab <- seq(a, b, length.out = 100)
 
-  legend("topleft", col = c("black", "red", "blue", "green"), 
-        legend = c("true", "h = 1", "h = 0.5", "h = 0.1"), pch = "l")
+plot(ab, dnorm(ab), type = "l", xlab = "x", ylab = "density")
+lines(ab, f1(ab), col = "red")
+lines(ab, f2(ab), col = "blue")
+lines(ab, f3(ab), col = "green")
+
+legend("topleft",
+  col = c("black", "red", "blue", "green"),
+  legend = c("true", "h = 1", "h = 0.5", "h = 0.1"), pch = "l"
+)
 
 }
 \seealso{

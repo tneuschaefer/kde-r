@@ -3,9 +3,10 @@
 #' @description \code{kernel_estimator} creates a kernel density estimator using
 #'   the provided sample, kernel and bandwidth
 #'
-#' @param X numeric vector of the observation sample
-#' @param K kernel function
-#' @param h non-negative numeric scalar, the bandwidth of the estimator
+#' @param x numeric vector of the observation sample
+#' @param kernel kernel function, default is Gaussian kernel
+#' @param bandwith non-negative numeric scalar, the bandwidth of the estimator
+#'  default is 1
 #'
 #' @return A function which estimates the probability density function of the
 #'   sample \code{X}
@@ -39,37 +40,38 @@
 #' )
 #'
 #' @export
-kernel_estimator <- function(X, K, h = 1) {
+kernel_estimator <- function(x, kernel = stats::dnorm, bandwith = 1) {
   # Sample condition
   stopifnot(
-    "X must be a numeric" = is.numeric(X),
-    "X must be non empty" = length(X) > 0
+    "X must be a numeric" = is.numeric(x),
+    "X must be non empty" = length(x) > 0
   )
 
   # Kernel condition
-  stopifnot("K is not a funtion" = is.function(K))
+  stopifnot("K is not a funtion" = is.function(kernel))
 
   # Bandwidth condition
   stopifnot(
-    "h must be numeric" = is.numeric(h),
-    "h must be non-negativ" = h > 0,
-    "h must have length one" = length(h) == 1
+    "h must be numeric" = is.numeric(bandwith),
+    "h must be non-negativ" = bandwith > 0,
+    "h must have length one" = length(bandwith) == 1
   )
 
-  estimator <- function(x) {
+  # returning estimator function
+  function(t) {
     stopifnot(
-      "x must be numeric" = is.numeric(x),
-      "x miust be non empty" = length(x) > 0
+      "x must be numeric" = is.numeric(t),
+      "x miust be non empty" = length(t) > 0
     )
 
-    n <- length(X)
-    m <- length(x)
+    n <- length(x)
+    m <- length(t)
     Mat <- matrix(0, nrow = n, ncol = m)
 
     for (i in 1:n) {
       for (j in 1:m) {
-        U <- (X[i] - x[j]) / h
-        Mat[i, j] <- K(U) / h
+        U <- (x[i] - t[j]) / bandwith
+        Mat[i, j] <- kernel(U) / bandwith
       }
     }
     apply(Mat, 2, mean)

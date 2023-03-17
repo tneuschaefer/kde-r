@@ -1,11 +1,11 @@
 #' Cross-Validation
 #'
-#' @description \code{cross_validate} estimates an optimal bandwidth
+#' @description \code{cross_validation} estimates an optimal bandwidth
 #'   for kernel density estimation using the cross-validation method
 #'
 #' @param X numeric vector of the observation sample
 #' @param K kernel function used for the kernel density estimation
-#' @param n number of bandwidths to be optimized from. \code{cross_validate}
+#' @param n number of bandwidths to be optimized from. \code{cross_validation}
 #'   selects a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param N number of subdivisions used in discretization of integrals
 #'
@@ -28,7 +28,7 @@
 #' @examples
 #'
 #' X <- rnorm(1000)
-#' h <- cross_validate(X, dnorm)
+#' h <- cross_validation(X, dnorm)
 #' f <- kernel_estimator(X, dnorm, h)
 #'
 #' a <- min(X)
@@ -45,7 +45,7 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-cross_validate <- function(X, K, n = 40L, N = 100) {
+cross_validation <- function(X, K, n = 40L, N = 100) {
   # Sample condition
   stopifnot(
     "X must be a numeric" = is.numeric(X),
