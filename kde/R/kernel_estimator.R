@@ -41,30 +41,32 @@
 #' )
 #'
 #' @export
-kernel_estimator <- function(x, kernel = stats::dnorm, bandwith = 1, na.rm = FALSE) {
+kernel_estimator <- function(
+        x, kernel = stats::dnorm,
+        built_in = c("gaussian", "epanechnikow", "rectangular", "triangular", "biweight", "silverman"),
+        bandwith = 1, na.rm = FALSE) {
+    # remove NA values if na.rm is set to TRUE
+    if (na.rm) x <- x[!is.na(x)]
 
-  # remove NA values if na.rm is set to TRUE
-  if (na.rm) x <- x[!is.na(x)]
+    # ensuring requirements
+    stopifnot(
+        "x must be a numeric" = is.numeric(x),
+        "x must not be empty" = length(x) > 0,
+        "kernel must be a function" = is.function(kernel),
+        "bandwidth must be numeric" = is.numeric(bandwith),
+        "bandwidth must be greater than 0" = bandwith > 0,
+        "x contains missing values" = anyNA(x)
+    )
 
-  # ensuring requirements
-  stopifnot(
-    "x must be a numeric" = is.numeric(x),
-    "x must not be empty" = length(x) > 0,
-    "kernel must be a function" = is.function(kernel),
-    "bandwidth must be numeric" = is.numeric(bandwith),
-    "bandwidth must be greater than 0" = bandwith > 0,
-    "x contains missing values" = anyNA(x)
-  )
-
-  # in case the provided bandwidth is of length greater than 1
-  bandwith <- bandwith[1]
+    # in case the provided bandwidth is of length greater than 1
+    bandwith <- bandwith[1]
 
   # TODO redo all of this shit
-  # returning estimator function
-  function(t) {
-    stopifnot(
-      "x must be numeric" = is.numeric(t),
-      "x miust be non empty" = length(t) > 0
+    # returning estimator function
+    function(t) {
+        stopifnot(
+          "x must be numeric" = is.numeric(t),
+        "x miust be non empty" = length(t) > 0
     )
 
     n <- length(x)
