@@ -41,22 +41,19 @@
 #'
 #' @export
 kernel_estimator <- function(x, kernel = stats::dnorm, bandwith = 1) {
-  # Sample condition
+  # ensuring requirements
   stopifnot(
-    "X must be a numeric" = is.numeric(x),
-    "X must be non empty" = length(x) > 0
+    "x must be a numeric" = is.numeric(x),
+    "x must not be empty" = length(x) > 0,
+    "kernel must be a function" = is.function(kernel),
+    "bandwidth must be numeric" = is.numeric(bandwith),
+    "bandwidth must be greater than 0" = bandwith > 0
   )
 
-  # Kernel condition
-  stopifnot("K is not a funtion" = is.function(kernel))
+  # in case the provided bandwidth is of length greater than 1
+  bandwith <- bandwith[1]
 
-  # Bandwidth condition
-  stopifnot(
-    "h must be numeric" = is.numeric(bandwith),
-    "h must be non-negativ" = bandwith > 0,
-    "h must have length one" = length(bandwith) == 1
-  )
-
+  # TODO redo all of this shit
   # returning estimator function
   function(t) {
     stopifnot(

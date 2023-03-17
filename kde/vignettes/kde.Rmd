@@ -41,8 +41,10 @@ plot(ab, dnorm(ab), xlab = "x", ylab = "density", type = "l")
 lines(ab, f1(ab), col = "red")
 lines(ab, f2(ab), col = "blue")
 lines(ab, f3(ab), col = "green")
-legend("topleft", legen = c("real", "h=1", "h=0.5", "h=0.1"),
-       col = c("black", "red", "blue", "green"), pch = "|")
+legend("topleft",
+  legen = c("real", "h=1", "h=0.5", "h=0.1"),
+  col = c("black", "red", "blue", "green"), pch = "|"
+)
 ```
 
 In this plot we generate standard normal-distributed random numbers and try to estimate their density with different h and a Gaussian-Kernel. It is obvious that the form of the kernel density estimator depends on h. In general too small or to big h result in a bad estimation, therefor a good selection for h is important. The estimator also depends on the Kernel K, here for example are estimation of the same sample using the density of a uniform distribution as a kernel
@@ -56,8 +58,10 @@ plot(ab, dnorm(ab), xlab = "x", ylab = "density", type = "l")
 lines(ab, g1(ab), col = "red")
 lines(ab, g2(ab), col = "blue")
 lines(ab, g3(ab), col = "green")
-legend("topleft", legen = c("real", "h=1", "h=0.5", "h=0.1"),
-       col = c("black", "red", "blue", "green"), pch = "|")
+legend("topleft",
+  legen = c("real", "h=1", "h=0.5", "h=0.1"),
+  col = c("black", "red", "blue", "green"), pch = "|"
+)
 ```
 
 Note that different kernel K have different optimal h, that means that it is important to select optimal h for different K. This brings us to bandwidth-selection algorithms. There are different approaches to estimate optimal bandwidths, this package includes three different methods one can use to use to select bandwidths:
@@ -80,20 +84,24 @@ K2 <- kernel_estimator(X, dnorm, h2)
 plot(ab, dnorm(ab), xlab = "x", ylab = "density", type = "l")
 lines(ab, K1(ab), col = "red")
 lines(ab, K2(ab), col = "blue")
-legend("topleft", legen = c("real", "PCO", "cross-validate"),
-       col = c("black", "red", "blue"), pch = "|")
+legend("topleft",
+  legen = c("real", "PCO", "cross-validate"),
+  col = c("black", "red", "blue"), pch = "|"
+)
 ```
 
 Now that we have the density of our sample we can simulate new samples using rejection_sampling(), this method takes a density you want to take samples from (sample_density), a distribution and its density and a numeric positive scalar M satisfying sample_density(x) <= M * density(x) for all x as an input and gives a distribution function like runif(n) as an output. The function itself produces samples y from the given distribution and samples from a uniform-distribution u and accept/rejects y iff u * M * sample_density(y) <= density(y). Samples are accepted/rejected with probability of 1/M, therefor it takes M samples to accept one and a small selection of M is preferable. If no suitable M is known the user can give the function an interval that contains a maximum of sample_density/density, the function will try to compute the maximum and uses this as M. Note that this M does not have to be optimal and in general Distributions similar to the  the sample_density-distribution produce better samples. We can generate samples of our estimator as an example:
 
 ```{r, fig.dim=c(5,5)}
-estimate_sample <- rejection_sample(K2, rnorm, dnorm, interval = c(-1,1))
+estimate_sample <- rejection_sample(K2, rnorm, dnorm, interval = c(-1, 1))
 sample <- estimate_sample(100)
 
 plot(ab, K2(ab), xlab = "x", ylab = "density", type = "l")
 points(sample, rep(0, 100), col = "red", pch = "o")
-legend("topleft", legen = c("density", "sample"),
-       col = c("black", "red"), pch = c("|","o"))
+legend("topleft",
+  legen = c("density", "sample"),
+  col = c("black", "red"), pch = c("|", "o")
+)
 ```
 
 # Sources
