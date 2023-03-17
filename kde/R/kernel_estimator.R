@@ -79,8 +79,8 @@ kernel_estimator <- function(x, kernel = stats::dnorm,
   # returning estimator function
   function(t) {
     stopifnot(
-      "x must be numeric" = is.numeric(t),
-      "x miust be non empty" = length(t) > 0
+      "t must be numeric" = is.numeric(t),
+      "t must not be empty" = length(t) > 0
     )
 
     n <- length(x)
