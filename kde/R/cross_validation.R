@@ -47,7 +47,7 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-cross_validation <- function(x, kernel, n = 40L, N = 100L, 
+cross_validation <- function(x, kernel = stats::dnorm, n = 40L, N = 100L, 
 built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
@@ -60,12 +60,13 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     "kernel must be a function" = is.function(kernel),
     "n must be numeric" = is.numeric(n),
     "n must not be empty" = length(n) > 0,
-    "lambda must be numeric" = is.numeric(lambda),
-    "lambda must be greater than 1" = lambda >= 1,
-    "lambda must not be empty" = length(lambda) > 0,
     "N must be numeric" = is.numeric(N),
     "N must not be empty" = length(N) > 0
   )
+
+  # reformat arguments where possible without throwing an error
+  n <- as.integer(abs(n[1]))
+  N <- as.integer(abs(N[1]))
 
   # if built_in was provided use that as the kernel
   if (!missing(built_in)) {
@@ -80,10 +81,6 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
       silverman = silverman()
     )
   }
-
-  # reformat arguments where possible without throwing an error
-  n <- as.integer(abs(n[1]))
-  N <- as.integer(abs(N[1]))
 
   a <- min(x)
   b <- max(x)

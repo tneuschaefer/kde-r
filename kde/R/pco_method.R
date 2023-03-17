@@ -63,38 +63,30 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-pco_method <- function(x, kernel, n = 40, lambda = 1, N = 100L,
+pco_method <- function(x, kernel = stats::dnorm, n = 40, lambda = 1, N = 100L,
 built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
 
-  # Sample condition
+  # ensuring requirements
   stopifnot(
-    "X must be a numeric" = is.numeric(x),
-    "X must be a non empty" = length(x) > 0
-  )
-
-  # Kernel condition
-  stopifnot("K is not a function" = is.function(kernel))
-
-  # Bandwidth condition
-  stopifnot(
+    "x must be numeric" = is.numeric(x),
+    "x must not be empty" = length(x) > 0,
+    "x contains missing values" = !anyNA(x),
+    "kernel must be a function" = is.function(kernel),
     "n must be numeric" = is.numeric(n),
-    "n must have length one" = length(n) == 1
-  )
-
-  # Lamda condition
-  stopifnot(
-    "Lambda must be numeric" = is.numeric(lambda),
-    "Lambda must have length one" = length(lambda) == 1,
-    "Lambda must be > 0" = lambda > 0
-  )
-
-  # Subdivisions condition
-  stopifnot(
+    "n must not be empty" = length(n) > 0,
+    "lambda must be numeric" = is.numeric(lambda),
+    "lambda must be greater than 0" = lambda > 0,
+    "lambda must not be empty" = length(lambda) > 0,
     "N must be numeric" = is.numeric(N),
-    "N must have length one" = length(N) == 1
+    "N must not be empty" = length(N) > 0
   )
+
+  # reformat arguments where possible without throwing an error
+  n <- as.integer(abs(n[1]))
+  lambda <- lambda[1]
+  N <- as.integer(abs(N[1]))
 
   # if built_in was provided use that as the kernel
   if (!missing(built_in)) {
@@ -110,8 +102,6 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     )
   }
 
-  n <- as.integer(n)
-  N <- as.integer(N)
   m <- length(x)
   a <- min(x)
   b <- max(x)

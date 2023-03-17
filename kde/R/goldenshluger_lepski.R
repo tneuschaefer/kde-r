@@ -28,7 +28,7 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     "n must be numeric" = is.numeric(n),
     "n must not be empty" = length(n) > 0,
     "lambda must be numeric" = is.numeric(lambda),
-    "lambda must be greater than 1" = lambda >= 1,
+    "lambda must be greater than 1" = lambda > 1,
     "lambda must not be empty" = length(lambda) > 0,
     "N must be numeric" = is.numeric(N),
     "N must not be empty" = length(N) > 0
