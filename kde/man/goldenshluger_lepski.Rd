@@ -2,7 +2,7 @@
 % Please edit documentation in R/goldenshluger_lepski.R
 \name{goldenshluger_lepski}
 \alias{goldenshluger_lepski}
-\title{Goldenshluger and Lepski method}
+\title{Goldenshluger Lepski Method}
 \source{
 Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 }
@@ -19,13 +19,12 @@ goldenshluger_lepski(
 )
 }
 \arguments{
-\item{x}{x numeric vector of the observation sample}
+\item{x}{numeric vector of the observation sample}
 
-\item{kernel}{kernel function used for kernel density estimation, default
-is Gaussian kernel}
+\item{kernel}{kernel function used for kernel density estimation}
 
-\item{n}{number of bandwidths to be optimized from. \code{pco_method} selects
-a bandwidth contained in  (1/n, 2/n, ..., 1)}
+\item{n}{number of bandwidths to be optimized from. \code{goldenshluger_lepski}
+selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
 
 \item{lambda}{positive scalar used as tuning parameter}
 
@@ -36,27 +35,15 @@ a bandwidth contained in  (1/n, 2/n, ..., 1)}
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
 \value{
-The estimated optimal bandwidth
+The estimatet optimal bandwidth
 }
 \description{
-\code{goldenshluger_lepski} estiamtes the optimal bandwidth
-for kernel density estimation using the global Goldenshluger and Lepski
-method
-}
-\details{
-The Goldenshluger and Lepski method tries to minimize an upper bound
-for the mean integrated squared error (MISE) of a kernel density estimator
-
-The bias/variance decomposition is used. Because the bias term depends on
-the unknown density, a double kernel approach is used to to estimate the
-bias.
-
-An upper bound for the variance is estimated, this estemator depends on a
-tuning paramter \code{lambda}. Recommended is \code{lambda}=1.2
+\code{goldenshluger_lepski} estimates an optimal bandwidth
+for kernel density estimation using the Goldenshluger Lepski Method
 }
 \examples{
 
-x <- stats::rnorm(10)
+x <- stats::rnorm(100)
 h <- goldenshluger_lepski(x, kernel = stats::dnorm)
 f <- kernel_estimator(x, kernel = stats::dnorm, bandwidth = h)
 
@@ -76,6 +63,6 @@ legend("topleft",
 \code{\link{kernel_estimator}} for more information about kernel
 density estimation
 
-\code{\link{cross_validation}} and \code{\link{pco_method}} for other automatic bandwidth-selection
-algorithms
+\code{\link{cross_validation}} and \code{\link{pco_method}} for other
+automatic bandwidth-selection algorithms
 }

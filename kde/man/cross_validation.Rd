@@ -20,8 +20,7 @@ cross_validation(
 \arguments{
 \item{x}{numeric vector of the observation sample}
 
-\item{kernel}{kernel function used for the kernel density estimation, default
-is Gaussian kernel}
+\item{kernel}{kernel function used for the kernel density estimation}
 
 \item{n}{number of bandwidths to be optimized from. \code{cross_validation}
 selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
@@ -33,7 +32,7 @@ selects a bandwidth contained in  (1/n, 2/n, ..., 1)}
 \item{na.rm}{logical; if TRUE, missing values will be removed from x}
 }
 \value{
-The estimate optimal bandwidth
+The estimatet optimal bandwidth
 }
 \description{
 \code{cross_validation} estimates an optimal bandwidth
@@ -68,6 +67,6 @@ legend("topleft",
 \code{\link{kernel_estimator}} for more information about kernel
 density estimation
 
-\code{\link{goldenshluger_lepski}} and \code{\link{pco_method}} for other automatic bandwidth-selection
-algorithms
+\code{\link{goldenshluger_lepski}} and \code{\link{pco_method}} for other
+automatic bandwidth-selection algorithms
 }

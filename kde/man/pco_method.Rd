@@ -22,8 +22,7 @@ pco_method(
 \arguments{
 \item{x}{numeric vector of the observation sample}
 
-\item{kernel}{kernel function used for kernel density estimation, default
-is Gaussian kernel}
+\item{kernel}{kernel function used for kernel density estimation}
 
 \item{n}{number of bandwidths to be optimized from. \code{pco_method} selects
 a bandwidth contained in  (1/n, 2/n, ..., 1)}
@@ -41,7 +40,7 @@ The estimated optimal bandwidth
 }
 \description{
 \code{pco_method} estimates an optimal bandwidth
-for kernel density estimation using the PCO method
+for kernel density estimator using the PCO method
 }
 \details{
 The PCO method tries to minimize an upper bound for the mean

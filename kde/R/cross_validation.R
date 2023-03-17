@@ -4,8 +4,7 @@
 #'   for kernel density estimation using the cross-validation method
 #'
 #' @param x numeric vector of the observation sample
-#' @param kernel kernel function used for the kernel density estimation, default
-#'   is Gaussian kernel
+#' @param kernel kernel function used for the kernel density estimation
 #' @param n number of bandwidths to be optimized from. \code{cross_validation}
 #'   selects a bandwidth contained in  (1/n, 2/n, ..., 1)
 #' @param N number of subdivisions used in discretization of integrals
@@ -18,13 +17,13 @@
 #'   \code{cross_validation} approximates the estimator-dependent part of the
 #'   risk and selects the bandwidth with the minimal risk
 #'
-#' @return The estimate optimal bandwidth
+#' @return The estimatet optimal bandwidth
 #'
 #' @seealso \code{\link{kernel_estimator}} for more information about kernel
 #'   density estimation
 #'
-#'   \code{\link{goldenshluger_lepski}} and \code{\link{pco_method}} for other automatic bandwidth-selection
-#'   algorithms
+#'   \code{\link{goldenshluger_lepski}} and \code{\link{pco_method}} for other
+#'   automatic bandwidth-selection algorithms
 #'
 #' @source Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
 #'
@@ -48,7 +47,7 @@
 #' @include kernel_estimator.R
 #'
 #' @export
-cross_validation <- function(x, kernel = stats::dnorm, n = 40L, N = 100L,
+cross_validation <- function(x, kernel = stats::dnorm, n = 40L, N = 100L, 
 built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "silverman"), na.rm = FALSE) {
   # remove NA values if na.rm is set to TRUE
   if (na.rm) x <- x[!is.na(x)]
@@ -65,23 +64,23 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
     "N must not be empty" = length(N) > 0
   )
 
+  # reformat arguments where possible without throwing an error
+  n <- as.integer(abs(n[1]))
+  N <- as.integer(abs(N[1]))
+
   # if built_in was provided use that as the kernel
   if (!missing(built_in)) {
     # match the argument for built_in
     built_in <- match.arg(built_in)
     kernel <- switch(built_in,
       gaussian = stats::dnorm,
-      epanechnikov = epanechnikov,
-      rectangular = rectangular,
-      triangular = triangular,
-      biweight = biweight,
-      silverman = silverman
+      epanechnikov = epanechnikov(),
+      rectangular = rectangular(),
+      triangular = triangular(),
+      biweight = biweight(),
+      silverman = silverman()
     )
   }
-
-  # reformat arguments where possible without throwing an error
-  n <- as.integer(abs(n[1]))
-  N <- as.integer(abs(N[1]))
 
   a <- min(x)
   b <- max(x)
@@ -110,6 +109,6 @@ built_in = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight"
   for (k in 1:n) {
     crit[k] <- sum(estimf[k, ]^2) * (b - a) / N - 2 * sum(Mat[, , k]) / n / (n - 1)
   }
-  k <- which.min(crit)
-  k / n
+  crit <- crit[-1]
+  which.min(crit) / n
 }
