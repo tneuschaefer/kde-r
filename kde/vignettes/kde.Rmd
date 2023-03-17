@@ -1,0 +1,105 @@
+---
+title: "Kernel Density Estimation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Kernel Density Estimation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", width = 68
+)
+```
+
+```{r setup, include=FALSE}
+library(kde)
+```
+
+# Summary
+
+A big question in statistics is the following: How are samples distributed? Although it may be impossible to know the true distribution of a given sample, there are ways to estimate the distributions of samples. One of this ways are kernel density estimators. After the selection of a kernel K and a bandwidth h one can set up a function estimating the probability density function of given samples, the so called kernel density estimator. Like all estimation this estimation does not have to be good but for a good choice of h (and if K has appropriate properties) this estimation has valuable properties (for example convergence to true density). This package enables the user to set up kernel density estimators and automatically pick an optimal bandwidth. 
+
+# Methods
+
+The method to build kernel density estimators is kernel_estimator(),
+ this method takes a sample X, a kernel K and a bandwidth h as input and has the kernel density estimator function as the output. The sample X must be a non-empty numerical vector, K a (vectorized) numerical function (theoretical any numeric function can be used as a kernel, although in practice a number of kernels satisfying certain properties like the Gaussian- or Epanechnikov-Kernel are used) and the bandwidth h a non-negative numeric scalar. Here is an example on how to create a kernel density estimator:
+ 
+```{r, fig.dim=c(5,5)}
+X <- rnorm(1000)
+f1 <- kernel_estimator(X, dnorm, 1)
+f2 <- kernel_estimator(X, dnorm, 0.5)
+f3 <- kernel_estimator(X, dnorm, 0.1)
+
+a <- min(X)
+b <- max(X)
+ab <- seq(a, b, length.out = 100)
+
+plot(ab, dnorm(ab), xlab = "x", ylab = "density", type = "l")
+lines(ab, f1(ab), col = "red")
+lines(ab, f2(ab), col = "blue")
+lines(ab, f3(ab), col = "green")
+legend("topleft", legen = c("real", "h=1", "h=0.5", "h=0.1"),
+       col = c("black", "red", "blue", "green"), pch = "|")
+```
+
+In this plot we generate standard normal-distributed random numbers and try to estimate their density with different h and a Gaussian-Kernel. It is obvious that the form of the kernel density estimator depends on h. In general too small or to big h result in a bad estimation, therefor a good selection for h is important. The estimator also depends on the Kernel K, here for example are estimation of the same sample using the density of a uniform distribution as a kernel
+
+```{r, fig.dim=c(5,5)}
+g1 <- kernel_estimator(X, dunif, 1)
+g2 <- kernel_estimator(X, dunif, 0.5)
+g3 <- kernel_estimator(X, dunif, 0.1)
+
+plot(ab, dnorm(ab), xlab = "x", ylab = "density", type = "l")
+lines(ab, g1(ab), col = "red")
+lines(ab, g2(ab), col = "blue")
+lines(ab, g3(ab), col = "green")
+legend("topleft", legen = c("real", "h=1", "h=0.5", "h=0.1"),
+       col = c("black", "red", "blue", "green"), pch = "|")
+```
+
+Note that different kernel K have different optimal h, that means that it is important to select optimal h for different K. This brings us to bandwidth-selection algorithms. There are different approaches to estimate optimal bandwidths, this package includes three different methods one can use to use to select bandwidths:
+
+- cross_validate()
+
+- goldenshluger_lepski()
+
+- pco_method()
+
+All three method function the same: They take a sample X, a kernel K and two integers n and N as input and have an estimated optimal h as output. Internally each method tries to find the bandwidth from {1/n, 2/n, ..., 1} with the lowest mean integrated square error (MISE) but because computation of the MISE uses the (unknown) density of the samples, it is not possible to compute the MISE and the methods instead compute other risks and select the bandwidth with the minimal risk. For example cross-validation computes the terms dependent on the estimator and estimates the terms using the unknown density while the PCO method (Penalized Comparison to Overfitting) compares the estimator to the estimator with the lowest bandwidth (the one most likely to overfit) and introduces a penalty
+term. How good this methods are won't be discussed here in detail.  All three methods need to compute a lot of integrals, in order to compute these fast integrals are discretized and are instead computed as the mean from N samples inside [min(X),max(X)]. In addition to making the computation faster (especially for large samples) this can introduce errors which can be combated by taking a large N but will of course prolong the computation (you can't have both). In general pco_method() seems to be the fastest while goldenshluger_lepski() seems to be the slowest. We will now estimate an optimal bandwidth using cross_validation and the PCO method:
+
+```{r, fig.dim=c(5,5)}
+h1 <- pco_method(X, dnorm)
+h2 <- cross_validate(X, dnorm)
+K1 <- kernel_estimator(X, dnorm, h1)
+K2 <- kernel_estimator(X, dnorm, h2)
+
+plot(ab, dnorm(ab), xlab = "x", ylab = "density", type = "l")
+lines(ab, K1(ab), col = "red")
+lines(ab, K2(ab), col = "blue")
+legend("topleft", legen = c("real", "PCO", "cross-validate"),
+       col = c("black", "red", "blue"), pch = "|")
+```
+
+Now that we have the density of our sample we can simulate new samples using rejection_sampling(), this method takes a density you want to take samples from (sample_density), a distribution and its density and a numeric positive scalar M satisfying sample_density(x) <= M * density(x) for all x as an input and gives a distribution function like runif(n) as an output. The function itself produces samples y from the given distribution and samples from a uniform-distribution u and accept/rejects y iff u * M * sample_density(y) <= density(y). Samples are accepted/rejected with probability of 1/M, therefor it takes M samples to accept one and a small selection of M is preferable. If no suitable M is known the user can give the function an interval that contains a maximum of sample_density/density, the function will try to compute the maximum and uses this as M. Note that this M does not have to be optimal and in general Distributions similar to the  the sample_density-distribution produce better samples. We can generate samples of our estimator as an example:
+
+```{r, fig.dim=c(5,5)}
+estimate_sample <- rejection_sample(K2, rnorm, dnorm, interval = c(-1,1))
+sample <- estimate_sample(100)
+
+plot(ab, K2(ab), xlab = "x", ylab = "density", type = "l")
+points(sample, rep(0, 100), col = "red", pch = "o")
+legend("topleft", legen = c("density", "sample"),
+       col = c("black", "red"), pch = c("|","o"))
+```
+
+# Sources
+
+- Comte, F.: Nonparametric Esimation. Spartacus-Idh (2017)
+
+- Lacour et al, Estimator selection: a new method with applications to kernel density estimation (2017), https://arxiv.org/abs/1607.05091
+
+- https://en.wikipedia.org/wiki/Rejection_sampling

@@ -11,6 +11,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports:
@@ -22,3 +24,4 @@ Collate:
     'kde-package.R'
     'pco_method.R'
     'rejection_sampling.R'
+VignetteBuilder: knitr
