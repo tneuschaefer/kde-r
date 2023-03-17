@@ -44,7 +44,7 @@
 kernel_estimator <- function(x, kernel = stats::dnorm, bandwith = 1, na.rm = FALSE) {
 
   # remove NA values if na.rm is set to TRUE
-  if (na.rm) x <- stats::na.omit(x)
+  if (na.rm) x <- x[!is.na(x)]
 
   # ensuring requirements
   stopifnot(
