@@ -1,0 +1,13 @@
+test_that("argument requirements work", {
+  expect_error(rejection_sampling_factory(sample_density = 3))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = 3))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = 3))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif, m = TRUE))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif, m = numeric()))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif, m = -1))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif, interval = TRUE))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif, interval = 1))
+  expect_error(rejection_sampling_factory(sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif))
+  expect_error(rejection_sampling(n = TRUE, sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif))
+  expect_error(rejection_sampling(n = 0, sample_density = stats::dnorm, proposal_dist = stats::runif, proposal_density = stats::dunif))
+})
